@@ -100,7 +100,8 @@ export const Login = (props) => {
         )}
         {forgotpass && (
           <View style={{ alignItems: "center", width: "100%" }}>
-            <View style={styles.row}>
+            <View style={styles.column}>
+              <Text style={{ fontSize: 30 }}>Web App</Text>
               <Text style={styles.text}>
                 Nhập tên tài khoản để khôi phục mật khẩu
               </Text>
