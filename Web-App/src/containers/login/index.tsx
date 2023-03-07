@@ -54,7 +54,8 @@ export const Login = (props) => {
           )} */}
             <Input
               style={styles.input}
-              placeholder="Username"
+              placeholder="Phone"
+              keyboardType="numeric"
               value={username}
               onChangeText={(nextValue) => setUsername(nextValue)}
             />
@@ -114,7 +115,8 @@ export const Login = (props) => {
             )} */}
             <Input
               style={styles.inputforgot}
-              placeholder="Username"
+              placeholder="Email"
+              keyboardType="email-address"
               value={username}
               onChangeText={(nextValue) => setUsername(nextValue)}
             />
