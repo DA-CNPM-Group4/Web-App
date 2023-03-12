@@ -10,19 +10,27 @@ import { Route, Router, Routes } from "./utils/router";
 import { Platform } from "react-native";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MainLayout } from "./components/layout/MainLayout";
+import CreateTrip from "./containers/createtrip";
+import ListOrder from "./containers/listorder";
+import Drivers from "./containers/drivers";
+import Customers from "./containers/customers";
 
 const queryClient = new QueryClient();
+const token = false;
 
 export const App = () => {
-  //   if (auth.user?.accessToken) {
-  //     return (
-  //       <MainLayout>
-  //         <Routes>
-  //           <Route path="/test" element={<Document />} />
-  //         </Routes>
-  //       </MainLayout>
-  //     );
-  //   }
+  if (true) {
+    return (
+      <MainLayout>
+        <Routes>
+          <Route path="/" element={<ListOrder />} />
+          <Route path="/create" element={<CreateTrip />} />
+          <Route path="/drivers" element={<Drivers />} />
+          <Route path="/customers" element={<Customers />} />
+        </Routes>
+      </MainLayout>
+    );
+  }
 
   return <Login />;
 };
@@ -30,8 +38,7 @@ export const App = () => {
 export const Root = () => {
   return (
     <React.Fragment>
-      {/* <AuthenticationProvider>
-        <NavigationProvider> */}
+      {/* <AuthenticationProvider> */}
       <Router>
         <IconRegistry icons={EvaIconsPack} />
         <ApplicationProvider {...eva} theme={eva.light}>
@@ -40,8 +47,7 @@ export const Root = () => {
           </QueryClientProvider>
         </ApplicationProvider>
       </Router>
-      {/* </NavigationProvider>
-      </AuthenticationProvider> */}
+      {/* </AuthenticationProvider> */}
     </React.Fragment>
   );
 };

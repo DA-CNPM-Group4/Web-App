@@ -5,23 +5,17 @@ import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 // import { TopNavigation } from "./TopNavigation";
 // import { SideBar } from "./SideBar";
 import { Layout } from "@ui-kitten/components";
+import { Navigation } from "./navigation";
 
 export const MainLayout = ({ children }) => {
-  //   const navigation = useContext(navigationContext);
-
   return (
     <Layout style={styles.mainLayout} nativeID="mainLayout">
       <Layout style={styles.mainScreen}>
-        {/* <TopNavigation /> */}
-
+        <Navigation />
         <View style={styles.viewPoint} nativeID="content">
           {children}
         </View>
-
-        {/* <BottomTab /> */}
       </Layout>
-
-      {/* {navigation.state.isShowSideBar && <SideBar />} */}
     </Layout>
   );
 };
@@ -34,11 +28,12 @@ const styles = StyleSheet.create({
   },
   mainScreen: {
     flex: 1,
-    flexDirection: "column",
+    flexDirection: "row",
     height: "100%",
   },
   viewPoint: {
     flexShrink: 1,
-    height: Dimensions.get("window").height - 66 - 52,
+    width: "100%",
+    height: Dimensions.get("window").height,
   },
 });

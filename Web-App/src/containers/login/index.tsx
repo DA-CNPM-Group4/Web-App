@@ -55,14 +55,13 @@ export const Login = (props) => {
             <Input
               style={styles.input}
               placeholder="Phone"
-              keyboardType="numeric"
               value={username}
               onChangeText={(nextValue) => setUsername(nextValue)}
             />
             <Input
               style={styles.input}
               placeholder="Password"
-              secureTextEntry={password}
+              secureTextEntry={true}
               onChangeText={(nextValue) => setPassword(nextValue)}
             />
             <View style={styles.rowRight}>
@@ -85,7 +84,7 @@ export const Login = (props) => {
               <Button style={styles.button} onPress={() => onClickLogin()}>
                 Đăng nhập
               </Button>
-              <Text style={styles.text}>Hoặc</Text>
+              {/* <Text style={styles.text}>Hoặc</Text>
               <View style={styles.loginGoogle}>
                 <Button style={styles.buttonorther}>
                   Đăng nhập với Google
@@ -95,7 +94,7 @@ export const Login = (props) => {
                   ref={loginGoogleButtonRef}
                   style={styles.loginGoogleButton}
                 ></View>
-              </View>
+              </View> */}
             </Layout>
           </View>
         )}
