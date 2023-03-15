@@ -95,6 +95,12 @@ export const Navigation = () => {
             accessoryLeft={ListIcon}
             onPressIn={() => navigate("/")}
           />
+          <MenuItem
+            style={{ backgroundColor: "#F6F8F9" }}
+            title="Create Trip"
+            accessoryLeft={AvartarIcon}
+            onPressIn={() => navigate("/create")}
+          />
         </View>
         <View style={styles.MenuItem}>
           <MenuItem
