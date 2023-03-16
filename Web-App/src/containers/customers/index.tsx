@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { StyleSheet, View } from "react-native";
 import { useQuery } from "react-query";
-import { getListPassenger } from "../services/getapi";
+import { getListPassenger, getListTrip } from "../../services/getapi";
 
 export const Customers = (props) => {
   const navigate = useNavigate();
@@ -42,10 +42,16 @@ export const Customers = (props) => {
 
   const data = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
   const rootData = useQuery("dlumens", () => getListPassenger());
+  const root = useQuery("dens", () => getListTrip());
 
   useEffect(() => {
     console.log(rootData.data);
   }, [rootData.isFetched, rootData.isFetching]);
+
+  useEffect(() => {
+    console.log("OK");
+    console.log(root.data);
+  }, [root.isFetched, root.isFetching]);
 
   const renderItem = ({ item, index }) => {
     return (

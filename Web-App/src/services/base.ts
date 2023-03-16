@@ -1,5 +1,5 @@
 import axios, { Method } from 'axios';
-import { BASE_API_URL } from '../../config';
+import { BASE_API_URL } from '../config';
 
 export const sendAuthenicatedRequest = async (url: string, method: Method, data: any, responseType='json') => {
   const headers = {

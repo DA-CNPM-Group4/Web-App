@@ -12,7 +12,7 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import Icon2 from "react-native-vector-icons/Feather";
 import { StyleSheet, View } from "react-native";
 import { useQuery } from "react-query";
-import { getListPassenger } from "../services/getapi";
+import { getListPassenger } from "../../services/getapi";
 import {
   DirectionsRenderer,
   GoogleMap,

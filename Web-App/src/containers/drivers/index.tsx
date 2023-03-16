@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { StyleSheet, View } from "react-native";
 import { useQuery } from "react-query";
-import { getListDriver, getListPassenger } from "../services/getapi";
+import { getListDriver, getListPassenger } from "../../services/getapi";
 
 export const Customers = (props) => {
   const navigate = useNavigate();

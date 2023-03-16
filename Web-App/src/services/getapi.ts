@@ -1,6 +1,6 @@
 import axios from 'axios';
 import qs from 'qs';
-import { BASE_API_URL } from '../../config';
+import { BASE_API_URL } from '../config';
 import { Platform } from 'react-native';
 import { sendAuthenicatedRequest } from './base';
 
@@ -10,4 +10,8 @@ export const getListPassenger = async () => {
 
 export const getListDriver = async () => {
   return (await sendAuthenicatedRequest('/Info/Driver/GetDrivers', 'GET', null)).data;
+};
+
+export const getListTrip = async () => {
+  return (await sendAuthenicatedRequest('/Trip/Trip/GetTrips', 'GET', null)).data;
 };
