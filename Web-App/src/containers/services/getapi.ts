@@ -5,5 +5,9 @@ import { Platform } from 'react-native';
 import { sendAuthenicatedRequest } from './base';
 
 export const getListPassenger = async () => {
-  return (await sendAuthenicatedRequest('/Info/Passenger/GetPassengers', 'GET', null)).data.data;
+  return (await sendAuthenicatedRequest('/Info/Passenger/GetPassengers', 'GET', null)).data;
+};
+
+export const getListDriver = async () => {
+  return (await sendAuthenicatedRequest('/Info/Driver/GetDrivers', 'GET', null)).data;
 };

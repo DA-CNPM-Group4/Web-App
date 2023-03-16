@@ -15,6 +15,7 @@ import ListOrder from "./containers/listorder";
 import Drivers from "./containers/drivers";
 import Customers from "./containers/customers";
 import Info from "./containers/info";
+import TripInfo from "./containers/tripinfo";
 
 const queryClient = new QueryClient();
 const token = false;
@@ -29,6 +30,7 @@ export const App = () => {
           <Route path="/drivers" element={<Drivers />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/info" element={<Info />} />
+          <Route path="/tripinfo" element={<TripInfo />} />
         </Routes>
       </MainLayout>
     );

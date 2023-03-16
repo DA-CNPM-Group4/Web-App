@@ -78,9 +78,11 @@ export const Navigation = () => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              paddingHorizontal: 20,
+              paddingVertical: 20,
             }}
           >
-            <Text>Web App</Text>
+            <Text style={{ fontSize: 25 }}>Web App</Text>
           </View>
 
           <MenuItem
@@ -91,13 +93,13 @@ export const Navigation = () => {
           />
           <MenuItem
             style={{ backgroundColor: "#F6F8F9" }}
-            title="List Order"
+            title="List trip"
             accessoryLeft={ListIcon}
             onPressIn={() => navigate("/")}
           />
           <MenuItem
             style={{ backgroundColor: "#F6F8F9" }}
-            title="Create Trip"
+            title="Book a trip"
             accessoryLeft={AvartarIcon}
             onPressIn={() => navigate("/create")}
           />
@@ -151,7 +153,9 @@ export const Navigation = () => {
             style={{ backgroundColor: "#F6F8F9" }}
             title="Setting"
             accessoryLeft={SettingsIcon}
-            // onPressIn={}
+            onPressIn={() => {
+              navigate("/info");
+            }}
           />
         </View>
       </View>

@@ -66,14 +66,9 @@ export const CreateTrip = (props) => {
         lat: place?.geometry?.location?.lat(),
         lng: place?.geometry?.location?.lng(),
       });
-      //variable to store the name from place details result
       const name = place.name;
-      //variable to store the status from place details result
       const status = place.business_status;
-      //variable to store the formatted address from place details result
       const formattedAddress = place.formatted_address;
-      // console.log(place);
-      //console log all results
       console.log(`Name: ${name}`);
       console.log(`Business Status: ${status}`);
       console.log(`Formatted Address: ${formattedAddress}`);
@@ -95,14 +90,9 @@ export const CreateTrip = (props) => {
         lat: place?.geometry?.location?.lat(),
         lng: place?.geometry?.location?.lng(),
       });
-      //variable to store the name from place details result
       const name = place.name;
-      //variable to store the status from place details result
       const status = place.business_status;
-      //variable to store the formatted address from place details result
       const formattedAddress = place.formatted_address;
-      // console.log(place);
-      //console log all results
       console.log(`Name: ${name}`);
       console.log(`Business Status: ${status}`);
       console.log(`Formatted Address: ${formattedAddress}`);
@@ -156,7 +146,7 @@ export const CreateTrip = (props) => {
               style={{ width: "100%", flexShrink: 1, fontSize: 25 }}
               category="s1"
             >
-              Create Order
+              Book a trip
             </Text>
           </View>
           <Text style={{ fontSize: 16, paddingBottom: 20 }} category="s1">
