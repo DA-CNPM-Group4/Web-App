@@ -20,6 +20,7 @@ import {
   DirectionsRenderer,
   DirectionsService,
 } from "@react-google-maps/api";
+import { getPrice, sendTripRequest } from "../../services/getapi";
 
 const BackIcon = (props) => (
   <Icon {...props} style={styles.icon} name="arrow-left" color="#000000" />
@@ -41,7 +42,7 @@ export const CreateTrip = (props) => {
 
   const [map, setMap] = React.useState(/** @type google.maps.Map */ null);
   const [directionsResponse, setDirectionsResponse] = React.useState(null);
-  const [distance, setDistance] = React.useState("");
+  const [distance, setDistance] = React.useState(1.2);
   const [duration, setDuration] = React.useState("");
   const [next, setNext] = React.useState(false);
   const [searchOriginResult, setSearchOriginResult] = React.useState<any>();
@@ -49,7 +50,19 @@ export const CreateTrip = (props) => {
     React.useState<any>();
 
   const [origin, setOrigin] = React.useState(null);
+  const [originName, setOriginName] = React.useState("");
   const [destination, setDestination] = React.useState(null);
+  const [destinationName, setDestinationName] = React.useState("");
+
+  const [prices, setPrices] = React.useState<any>();
+
+  useEffect(() => {
+    getPrice(distance).then((prices) => setPrices(prices));
+  }, [distance]);
+
+  useEffect(() => {
+    console.log(prices);
+  }, [prices]);
 
   const originRef = React.useRef<any>();
   const destiantionRef = React.useRef<any>();
@@ -66,6 +79,8 @@ export const CreateTrip = (props) => {
         lat: place?.geometry?.location?.lat(),
         lng: place?.geometry?.location?.lng(),
       });
+
+      setOriginName(place.name);
       const name = place.name;
       const status = place.business_status;
       const formattedAddress = place.formatted_address;
@@ -90,6 +105,7 @@ export const CreateTrip = (props) => {
         lat: place?.geometry?.location?.lat(),
         lng: place?.geometry?.location?.lng(),
       });
+      setDestinationName(place.name);
       const name = place.name;
       const status = place.business_status;
       const formattedAddress = place.formatted_address;
@@ -100,6 +116,10 @@ export const CreateTrip = (props) => {
       alert("Please enter text");
     }
   }
+  useEffect(() => {
+    setOrigin({ lat: 10.75552665046525, lng: 106.66452829325283 });
+    setDestination({ lat: 10.75552665046525, lng: 106.66452829325283 });
+  }, []);
 
   async function calculateRoute() {
     if (origin === null || destination === null) {
@@ -113,10 +133,32 @@ export const CreateTrip = (props) => {
     });
     console.log(results);
     setDirectionsResponse(results);
-    setDistance(results.routes[0].legs[0].distance.text);
+    setDistance(parseFloat(results.routes[0].legs[0].distance.text));
     console.log(distance);
     setDuration(results.routes[0].legs[0].duration.text);
     setNext(true);
+  }
+
+  async function requestTrip() {
+    await sendTripRequest({
+      PassengerId: "00000000-0000-0000-0000-000000000000",
+      StaffId: "b8d6041a-d2c9-4f01-bb4e-08db24a348e4",
+      RequestStatus: "FindingDriver",
+      PassengerNote: "Identity",
+      Distance: distance,
+      Destination: destinationName,
+      LatDesAddr: destination?.lat,
+      LongDesAddr: destination?.lng,
+      StartAddress: originName,
+      LatStartAddr: origin?.lat,
+      LongStartAddr: origin?.lng,
+      PassengerPhone: "01239916133",
+      Price: 20000,
+      VehicleType: "Motorbike",
+    }).then((IS) => {
+      console.log(IS);
+      navigate("/");
+    });
   }
 
   const center = {
@@ -220,7 +262,7 @@ export const CreateTrip = (props) => {
                     <Button appearance="ghost" accessoryLeft={MotorIcon}>
                       Motobike
                     </Button>
-                    <Text>12.000vnd</Text>
+                    <Text>{prices?.data?.motorbike}</Text>
                   </View>
                   <View style={{ flexDirection: "row", paddingLeft: 20 }}>
                     <Text style={{ fontSize: 11 }}>
@@ -248,7 +290,7 @@ export const CreateTrip = (props) => {
                     <Button appearance="ghost" accessoryLeft={CarIcon}>
                       Car
                     </Button>
-                    <Text>24.000vnd</Text>
+                    <Text>{prices?.data?.car4S}</Text>
                   </View>
                   <View style={{ flexDirection: "row", paddingLeft: 20 }}>
                     <Text style={{ fontSize: 11 }}>
@@ -266,9 +308,9 @@ export const CreateTrip = (props) => {
                     flexShrink: 1,
                     height: 30,
                   }}
-                  onPress={() => calculateRoute()}
+                  onPress={() => requestTrip()}
                 >
-                  Order
+                  Send Request
                 </Button>
               </View>
             )}
