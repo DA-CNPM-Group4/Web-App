@@ -72,7 +72,7 @@ export const Customers = (props) => {
 
   const [map, setMap] = React.useState(/** @type google.maps.Map */ null);
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyBwqWNFnAkDOuVip4NZ0vJPpxVAaRqUx6g",
+    googleMapsApiKey: "AIzaSyDvk1gd475Wq8f4U3hy8sXXLKk2dqK_g1g",
     libraries: ["places"],
   });
 

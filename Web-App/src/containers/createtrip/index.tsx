@@ -36,7 +36,7 @@ export const CreateTrip = (props) => {
   const navigate = useNavigate();
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyBwqWNFnAkDOuVip4NZ0vJPpxVAaRqUx6g",
+    googleMapsApiKey: "AIzaSyDvk1gd475Wq8f4U3hy8sXXLKk2dqK_g1g",
     libraries: ["places"],
   });
 

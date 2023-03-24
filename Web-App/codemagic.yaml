@@ -1,0 +1,27 @@
+workflows:
+  # This workflow runs on every commit to the master branch
+  my-workflow:
+    scripts:
+      # Install dependencies
+      - yarn install
+      # Build the website
+      - yarn build
+    artifacts:
+      # Specify the files you want to save as artifacts here
+      # For example:
+      # - build/*
+      - index.html
+      - build/static/**
+      - build/asset-manifest.json
+    publishing:
+      email:
+        recipients:
+          - thanhdat9096@gmail.com
+          - loichuanhuynh@gmail.com
+    triggering:
+      events:
+        - push
+      branch_patterns: 
+        - pattern: develop
+          include: false
+      cancel_previous_builds: true
