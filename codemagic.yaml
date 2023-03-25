@@ -1,11 +1,16 @@
 workflows:
   # This workflow runs on every commit to the master branch
   my-workflow:
+    environment:
+      vars:
+        NODE_OPTIONS: --openssl-legacy-provider
+        API_Key: AIzaSyCsTsN2T8xfPUzV7-6RQNEHHcfxp2YdD6M
+        GENERATE_SOURCEMAP: false
     scripts:
       # Install dependencies
       - npm install
       # Build the website
-      - npx expo start --web
+      - npx expo export:web
     artifacts:
       # Specify the files you want to save as artifacts here
       # For example:
