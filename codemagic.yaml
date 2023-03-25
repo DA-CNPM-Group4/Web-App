@@ -3,9 +3,9 @@ workflows:
   my-workflow:
     scripts:
       # Install dependencies
-      - yarn install
+      - npm install
       # Build the website
-      - yarn build
+      - npx expo start --web
     artifacts:
       # Specify the files you want to save as artifacts here
       # For example:
