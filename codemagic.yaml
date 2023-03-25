@@ -1,11 +1,6 @@
 workflows:
   # This workflow runs on every commit to the master branch
   my-workflow:
-    environment:
-      vars:
-        NODE_OPTIONS: --openssl-legacy-provider
-        API_Key: AIzaSyCsTsN2T8xfPUzV7-6RQNEHHcfxp2YdD6M
-        GENERATE_SOURCEMAP: false
     scripts:
       # Install dependencies
       - npm install
@@ -15,9 +10,9 @@ workflows:
       # Specify the files you want to save as artifacts here
       # For example:
       # - build/*
-      - index.html
-      - build/static/**
-      - build/asset-manifest.json
+      - web-build/index.html
+      - web-build/static/**
+      - web-build/asset-manifest.json
     publishing:
       email:
         recipients:
