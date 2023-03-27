@@ -37,21 +37,17 @@ export const Customers = (props) => {
   useEffect(() => {
     setName(status.name);
     setEmail(status.email);
-    setPhone(status.phone), setAddress(status.address);
+    setPhone(status.phone);
+    setAddress(status.address);
   }, [status]);
 
   const data = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
   const rootData = useQuery("dlumens", () => getListPassenger());
-  const root = useQuery("dens", () => getListTrip());
 
   useEffect(() => {
+    if (rootData === null) return;
     console.log(rootData.data);
   }, [rootData.isFetched, rootData.isFetching]);
-
-  useEffect(() => {
-    console.log("OK");
-    console.log(root.data);
-  }, [root.isFetched, root.isFetching]);
 
   const renderItem = ({ item, index }) => {
     return (
@@ -231,10 +227,7 @@ export const Customers = (props) => {
                 <Text>GENDER</Text>
               </View>
             </View>
-            {rootData.isSuccess &&
-              rootData.data?.status &&
-              rootData.data?.data?.length > 0}
-            {data.length > 0 && (
+            {rootData.isSuccess && rootData.data?.data?.length > 0 && (
               <List
                 style={{
                   maxHeight: "100%",
@@ -244,7 +237,7 @@ export const Customers = (props) => {
                 renderItem={renderItem}
               />
             )}
-            {data.length <= 0 && (
+            {rootData.isSuccess && rootData.data?.data?.length <= 0 && (
               <View
                 style={{
                   width: "100%",

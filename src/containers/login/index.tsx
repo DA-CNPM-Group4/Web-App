@@ -4,15 +4,28 @@ import { useNavigate } from "react-router-native";
 
 import { StyleSheet, View } from "react-native";
 import { useMutation } from "react-query";
+import { authContext } from "../../hooks/authentication";
 
 export const Login = (props) => {
   const navigate = useNavigate();
-  const [username, setUsername] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [phone, setPhone] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [forgotpass, setForgotPass] = React.useState(false);
+  const auth = useContext(authContext);
+
+  const loginMutation = useMutation(
+    (data: { phone?: string; email?: string; password?: string }) => {
+      return auth.signIn({
+        phone: data.phone,
+        email: data.email,
+        password: data.password,
+      });
+    }
+  );
 
   const onClickLogin = async () => {
-    console.log("Login");
+    return loginMutation.mutate({ phone, email, password });
   };
 
   const onClickForgot = async () => {
@@ -20,7 +33,11 @@ export const Login = (props) => {
     console.log("ForgotPassword");
   };
 
-  const loginGoogleButtonRef = useRef();
+  useEffect(() => {
+    if (loginMutation.isSuccess && auth.user?.accountId) {
+      navigate("/");
+    }
+  }, [loginMutation.isSuccess, auth.user]);
 
   return (
     <Layout
@@ -55,12 +72,19 @@ export const Login = (props) => {
             <Input
               style={styles.input}
               placeholder="Phone"
-              value={username}
-              onChangeText={(nextValue) => setUsername(nextValue)}
+              value={phone}
+              onChangeText={(nextValue) => setPhone(nextValue)}
+            />
+            <Input
+              style={styles.input}
+              placeholder="Email"
+              value={email}
+              onChangeText={(nextValue) => setEmail(nextValue)}
             />
             <Input
               style={styles.input}
               placeholder="Password"
+              value={password}
               secureTextEntry={true}
               onChangeText={(nextValue) => setPassword(nextValue)}
             />
@@ -116,8 +140,8 @@ export const Login = (props) => {
               style={styles.inputforgot}
               placeholder="Email"
               keyboardType="email-address"
-              value={username}
-              onChangeText={(nextValue) => setUsername(nextValue)}
+              value={email}
+              onChangeText={(nextValue) => setEmail(nextValue)}
             />
             <Layout
               style={{

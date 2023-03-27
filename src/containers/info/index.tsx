@@ -14,6 +14,8 @@ import { useQuery } from "react-query";
 import { getListPassenger } from "../../services/getapi";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import Icon2 from "react-native-vector-icons/Feather";
+import { authContext } from "../../hooks/authentication";
+import { updateInfoUser } from "../../services/authentication";
 
 const BackIcon = (props) => (
   <Icon {...props} style={styles.icon} name="arrow-left" color="#000000" />
@@ -43,7 +45,7 @@ export const Customers = (props) => {
     email: "loichuanhuynh@gmail.com",
     phone: "0123456789",
     address: "DH KHTN TP HCM",
-    password: "0123456",
+    password: "......",
   });
 
   const [name, setName] = React.useState(status.name);
@@ -51,6 +53,25 @@ export const Customers = (props) => {
   const [phone, setPhone] = React.useState(status.phone);
   const [address, setAddress] = React.useState(status.address);
   const [password, setPassword] = React.useState(status.password);
+  const auth = useContext(authContext);
+
+  const onClickUpdateInfo = async () => {
+    const res = await updateInfoUser({
+      accountId: auth.user.accountId,
+      identityNumber: auth.user.identityNumber,
+      Phone: phone,
+      Name: name,
+      Email: email,
+      Address: address,
+      Gender: auth.user.gender,
+    });
+  };
+  useEffect(() => {
+    setName(auth.user?.name);
+    setEmail(auth.user?.email);
+    setPhone(auth.user?.phone);
+    setAddress(auth.user?.address);
+  }, [auth, auth.user]);
 
   return (
     <Layout
@@ -326,7 +347,14 @@ export const Customers = (props) => {
               <Button appearance="outline">Cancel</Button>
             </View>
             <View style={{ paddingLeft: 5 }}>
-              <Button style={{ paddingRight: 5 }}>Save</Button>
+              <Button
+                style={{ paddingRight: 5 }}
+                onPress={() => {
+                  onClickUpdateInfo();
+                }}
+              >
+                Save
+              </Button>
             </View>
           </View>
         </View>

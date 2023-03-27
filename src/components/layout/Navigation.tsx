@@ -16,9 +16,13 @@ import FAI1con from "react-native-vector-icons/FontAwesome";
 import MFeatherIcon from "react-native-vector-icons/Feather";
 // import { authContext } from "../../hooks/authentication";
 import { useNavigate } from "react-router-native";
+import { authContext } from "../../hooks/authentication";
 
 const HomeIcon = (props) => (
   <FAIcon {...props} style={styles.icon} name="home" color="#000000" />
+);
+const LogOutIcon = (props) => (
+  <MFeatherIcon {...props} style={styles.icon} name="log-out" color="#000000" />
 );
 
 const ListIcon = (props) => (
@@ -63,6 +67,7 @@ const SettingsIcon = (props) => (
 
 export const Navigation = () => {
   const navigate = useNavigate();
+  const auth = useContext(authContext);
   return (
     <Layout style={styles.layoutMenuBar}>
       <View
@@ -155,6 +160,14 @@ export const Navigation = () => {
             accessoryLeft={SettingsIcon}
             onPressIn={() => {
               navigate("/info");
+            }}
+          />
+          <MenuItem
+            style={{ backgroundColor: "#F6F8F9" }}
+            title="Sign out"
+            accessoryLeft={LogOutIcon}
+            onPressIn={() => {
+              auth.signOut();
             }}
           />
         </View>

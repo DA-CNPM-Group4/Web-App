@@ -16,12 +16,15 @@ import Drivers from "./containers/drivers";
 import Customers from "./containers/customers";
 import Info from "./containers/info";
 import TripInfo from "./containers/tripinfo";
+import { authContext, AuthenticationProvider } from "./hooks/authentication";
 
 const queryClient = new QueryClient();
 const token = false;
 
 export const App = () => {
-  if (true) {
+  const auth = useContext(authContext);
+
+  if (auth.user?.accountId) {
     return (
       <MainLayout>
         <Routes>
@@ -42,16 +45,16 @@ export const App = () => {
 export const Root = () => {
   return (
     <React.Fragment>
-      {/* <AuthenticationProvider> */}
-      <Router>
-        <IconRegistry icons={EvaIconsPack} />
-        <ApplicationProvider {...eva} theme={eva.light}>
-          <QueryClientProvider client={queryClient}>
-            <App />
-          </QueryClientProvider>
-        </ApplicationProvider>
-      </Router>
-      {/* </AuthenticationProvider> */}
+      <AuthenticationProvider>
+        <Router>
+          <IconRegistry icons={EvaIconsPack} />
+          <ApplicationProvider {...eva} theme={eva.light}>
+            <QueryClientProvider client={queryClient}>
+              <App />
+            </QueryClientProvider>
+          </ApplicationProvider>
+        </Router>
+      </AuthenticationProvider>
     </React.Fragment>
   );
 };

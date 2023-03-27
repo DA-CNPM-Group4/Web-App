@@ -11,12 +11,20 @@ import { Navigate, useNavigate } from "react-router-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { StyleSheet, View } from "react-native";
 import { useQuery } from "react-query";
-import { getListPassenger, getListTrip } from "../../services/getapi";
+import {
+  getListDriver,
+  getListPassenger,
+  getListTrip,
+} from "../../services/getapi";
 import {
   DirectionsRenderer,
   GoogleMap,
   useJsApiLoader,
 } from "@react-google-maps/api";
+import { authContext } from "../../hooks/authentication";
+import { getInfoDriver, getInfoPassenger } from "../../services/authentication";
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, child, get } from "firebase/database";
 
 const AvartarIcon = (props) => (
   <Icon {...props} style={styles.icon} name="user-circle" color="#000000" />
@@ -33,26 +41,126 @@ const StarIcon = (props) => (
 
 export const Customers = (props) => {
   const navigate = useNavigate();
+  const auth = useContext(authContext);
+
+  const firebaseConfig = {
+    // ...
+    // The value of `databaseURL` depends on the location of the database
+    databaseURL: "https://doancnpmnhom4-6bc5e-default-rtdb.firebaseio.com",
+  };
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+  const dbRef = ref(database);
+  const OnClickTrip = (tripId) => {
+    if (tripId === "") return;
+    get(child(dbRef, `trips/${tripId}`))
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          console.log(snapshot.val());
+          if (snapshot.val()?.TripStatus === "PickingUpCus") {
+            const driver = OnClickDriver(snapshot.val()?.DriverId);
+            console.log("driver" + driver);
+            if (driver === null) {
+              console.log("Driver no active");
+              return;
+            } else {
+              setOrigin({
+                lat: driver?.location?.lat,
+                lng: driver?.location?.long,
+              });
+              console.log({
+                lat: driver?.location?.lat,
+                lng: driver?.location?.long,
+              });
+              setDestination({
+                lat: destinationb?.lat,
+                lng: destinationb?.long,
+              });
+              console.log({
+                lat: destinationb?.lat,
+                lng: destinationb?.long,
+              });
+            }
+            return;
+          } else {
+            const driver = OnClickDriver(snapshot.val()?.DriverId);
+            console.log("driver" + driver);
+            if (driver === null) {
+              console.log("Driver no active");
+              return;
+            } else {
+              setOrigin({
+                lat: originb?.lat,
+                lng: originb?.long,
+              });
+              setDestination({
+                lat: driver?.location?.lat,
+                lng: driver?.location?.long,
+              });
+              console.log({
+                lat: driver?.location?.lat,
+                lng: driver?.location?.long,
+              });
+              console.log({
+                lat: originb?.lat,
+                lng: originb?.long,
+              });
+            }
+            return;
+          }
+        } else {
+          console.log("No data available");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const OnClickDriver: any = (driverId) => {
+    get(child(dbRef, `drivers/${driverId}`))
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          console.log(snapshot.val());
+          return snapshot.val();
+        } else {
+          console.log("Driver null");
+          return null;
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        return null;
+      });
+  };
 
   const [distance, setDistance] = React.useState("");
+  const [tripId, setTripId] = React.useState("");
   const [duration, setDuration] = React.useState("");
 
   const center = {
     lat: 10.75552665046525,
     lng: 106.66452829325283,
   };
-  const origin = {
-    lat: 10.75552665046525,
-    lng: 106.66452829325283,
-  };
-  const destination = {
-    lat: 17.75552665046525,
-    lng: 106.66452829325283,
-  };
+  const [origin, setOrigin] = React.useState(null);
+  const [destination, setDestination] = React.useState(null);
+  const [originb, setOriginb] = React.useState(null);
+  const [destinationb, setDestinationb] = React.useState(null);
   const [directionsResponse, setDirectionsResponse] = React.useState(null);
 
   useEffect(() => {
+    if (directionsResponse === null) return;
+    console.log(directionsResponse);
+  }, [directionsResponse]);
+
+  useEffect(() => {
+    console.log(origin);
+    console.log(destination);
     calculateRoute();
+    const interval = setInterval(() => {
+      OnClickTrip(tripId);
+    }, 5 * 1000);
+    return () => clearInterval(interval);
   }, [origin, destination]);
 
   async function calculateRoute() {
@@ -67,21 +175,12 @@ export const Customers = (props) => {
     });
     console.log(results);
     setDirectionsResponse(results);
-    setDistance(results.routes[0].legs[0].distance.text);
-    console.log(distance);
-    setDuration(results.routes[0].legs[0].duration.text);
   }
 
   const [map, setMap] = React.useState(/** @type google.maps.Map */ null);
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyDvk1gd475Wq8f4U3hy8sXXLKk2dqK_g1g",
+    googleMapsApiKey: "AIzaSyDIH4e-UOIM2oi0m9w1yUXp0-DHR4y_7DI",
     libraries: ["places"],
-  });
-  const [status, setStatus] = React.useState({
-    name: "Huynh Loi Chuan",
-    email: "loichuanhuynh@gmail.com",
-    phone: "0123456789",
-    address: "DH KHTN TP HCM",
   });
 
   const [info, setInfo] = React.useState(false);
@@ -92,18 +191,50 @@ export const Customers = (props) => {
     <Icon {...props} style={styles.icon} name="check-square" color="#23B000" />
   );
   const [Dname, setDName] = React.useState("");
+  const [Passengers, setP] = React.useState<any>(null);
+  const [Drivers, setD] = React.useState<any>(null);
+
+  useEffect(() => {
+    getListPassenger().then((data) => {
+      setP(data.data);
+    });
+    getListDriver().then((data) => {
+      setD(data.data);
+    });
+  }, []);
   const [Cname, setCName] = React.useState("");
   const [startAdd, setStartAdd] = React.useState("");
   const [EndAdd, setEndAdd] = React.useState("");
   const [price, setPrice] = React.useState("");
   const [trip, setTrip] = React.useState("");
-
-  const data = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
-  const rootData = useQuery("", () => getListTrip());
+  const [flag, setFlag] = React.useState(false);
+  const rootData = useQuery("/", () => getListTrip());
+  const [rootDataProcess, setRootDataProcess] = React.useState<any>(null);
 
   useEffect(() => {
-    console.log(rootData.data);
-  }, [rootData.isFetched, rootData.isFetching]);
+    if (rootDataProcess === null) return;
+    console.log(rootDataProcess);
+    setFlag(true);
+  }, [rootDataProcess]);
+
+  useEffect(() => {
+    if (rootData === null) return;
+    setFlag(false);
+    const data = rootData.data?.data?.map((item, index, map) => {
+      const customer = Passengers?.find(
+        (p) => p.accountId === item.passengerId
+      );
+      const driver = Drivers?.find((d) => d.accountId === item.driverId);
+      if (customer != undefined) {
+        item.PassengerName = customer?.name;
+      } else item.PassengerName = "No Name";
+      if (driver != undefined) {
+        item.DriverName = driver?.name;
+      } else item.DriverName = "No Name";
+      return item;
+    });
+    setRootDataProcess(data);
+  }, [rootData.isFetched, rootData.isFetching, Passengers, Drivers]);
 
   const renderItem = ({ item, index }) => {
     return (
@@ -116,14 +247,31 @@ export const Customers = (props) => {
           paddingBottom: 0,
         }}
         onPress={() => {
-          setDName(item?.driverId);
-          setCName(item?.passengerId);
+          setDName(item?.DriverName);
+          setCName(item?.PassengerName);
           setDistance(item?.distance);
           setStartAdd(item?.startAddress);
           setEndAdd(item?.destination);
           setPrice(item?.price);
           setTrip(item?.tripId);
           setInfo(true);
+          setOrigin({
+            lat: item?.latStartAddr,
+            lng: item?.longStartAddr,
+          });
+          setDestination({
+            lat: item?.latDesAddr,
+            lng: item?.longDesAddr,
+          });
+          setOriginb({
+            lat: item?.latStartAddr,
+            lng: item?.longStartAddr,
+          });
+          setDestinationb({
+            lat: item?.latDesAddr,
+            lng: item?.longDesAddr,
+          });
+          setTripId(item?.tripId);
         }}
       >
         <View
@@ -146,7 +294,7 @@ export const Customers = (props) => {
             }}
           >
             <Text numberOfLines={1} style={{ fontSize: 13, width: "100%" }}>
-              {item?.driverId}
+              {item?.DriverName}
             </Text>
           </View>
           <View
@@ -159,7 +307,7 @@ export const Customers = (props) => {
             }}
           >
             <Text numberOfLines={1} style={{ fontSize: 13, width: "100%" }}>
-              {item?.passengerId}
+              {item?.PassengerName}
             </Text>
           </View>
           <View
@@ -320,21 +468,18 @@ export const Customers = (props) => {
                 <Text>DISTANCE</Text>
               </View>
             </View>
-            {rootData.isSuccess &&
-              rootData.data?.status &&
-              rootData.data?.data?.length > 0}
-            {data.length > 0 && (
+            {rootData.isSuccess && flag && rootData.data?.data?.length > 0 && (
               <List
                 style={{
                   maxHeight: "100%",
                   flexShrink: 1,
                   width: "100%",
                 }}
-                data={rootData.data?.data}
+                data={rootDataProcess}
                 renderItem={renderItem}
               />
             )}
-            {data.length <= 0 && (
+            {rootData.isSuccess && flag && rootData.data?.data?.length <= 0 && (
               <View
                 style={{
                   width: "100%",
@@ -372,7 +517,13 @@ export const Customers = (props) => {
               appearance="ghost"
               accessoryLeft={BackIcon}
               onPress={() => {
+                setTripId("");
+                setOrigin(null);
+                setDestination(null);
+                setOriginb(null);
+                setDestinationb(null);
                 setInfo(false);
+                setDirectionsResponse(null);
               }}
             ></Button>
             <Text style={{ fontSize: 25 }} category="s1">

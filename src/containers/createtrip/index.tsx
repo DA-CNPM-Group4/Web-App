@@ -21,6 +21,7 @@ import {
   DirectionsService,
 } from "@react-google-maps/api";
 import { getPrice, sendTripRequest } from "../../services/getapi";
+import { authContext } from "../../hooks/authentication";
 
 const BackIcon = (props) => (
   <Icon {...props} style={styles.icon} name="arrow-left" color="#000000" />
@@ -34,9 +35,10 @@ const CarIcon = (props) => (
 
 export const CreateTrip = (props) => {
   const navigate = useNavigate();
+  const auth = useContext(authContext);
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyDvk1gd475Wq8f4U3hy8sXXLKk2dqK_g1g",
+    googleMapsApiKey: "AIzaSyDIH4e-UOIM2oi0m9w1yUXp0-DHR4y_7DI",
     libraries: ["places"],
   });
 
@@ -140,9 +142,9 @@ export const CreateTrip = (props) => {
   }
 
   async function requestTrip() {
-    await sendTripRequest({
+    const res = await sendTripRequest({
       PassengerId: "00000000-0000-0000-0000-000000000000",
-      StaffId: "b8d6041a-d2c9-4f01-bb4e-08db24a348e4",
+      StaffId: auth.user.accountId,
       RequestStatus: "FindingDriver",
       PassengerNote: "Identity",
       Distance: distance,

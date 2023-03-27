@@ -17,7 +17,7 @@ export const getListTrip = async () => {
 };
 
 export const getPrice = async (distance) => {
-  return (await sendAuthenicatedRequest('Trip/TripRequest/CalculatePrice?distance=' + distance, 'GET', null)).data;
+  return (await sendAuthenicatedRequest('/Trip/TripRequest/CalculatePrice?distance=' + distance, 'GET', null)).data;
 };
 
 export const sendTripRequest = async ({ PassengerId, StaffId, RequestStatus, PassengerNote, Distance, Destination, LatDesAddr, LongDesAddr, StartAddress, LatStartAddr, LongStartAddr, PassengerPhone, Price, VehicleType }) => {
