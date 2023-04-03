@@ -55,6 +55,7 @@ export const CreateTrip = (props) => {
   const [originName, setOriginName] = React.useState("");
   const [destination, setDestination] = React.useState(null);
   const [destinationName, setDestinationName] = React.useState("");
+  const [ind, setInd] = React.useState(0);
 
   const [prices, setPrices] = React.useState<any>();
 
@@ -251,8 +252,10 @@ export const CreateTrip = (props) => {
                     width: "100%",
                     paddingLeft: -24,
                     paddingRight: -24,
+                    backgroundColor: ind === 1 ? "#808080" : "#FFFFFF",
                   }}
                   appearance="ghost"
+                  onPress={() => setInd(1)}
                 >
                   <View
                     style={{
@@ -279,8 +282,10 @@ export const CreateTrip = (props) => {
                     width: "100%",
                     paddingLeft: -24,
                     paddingRight: -24,
+                    backgroundColor: ind === 2 ? "#808080" : "#FFFFFF",
                   }}
                   appearance="ghost"
+                  onPress={() => setInd(2)}
                 >
                   <View
                     style={{
@@ -290,9 +295,45 @@ export const CreateTrip = (props) => {
                     }}
                   >
                     <Button appearance="ghost" accessoryLeft={CarIcon}>
-                      Car
+                      Car4s
                     </Button>
-                    <Text>{prices?.data?.car4S}</Text>
+                    <Text>
+                      {prices?.data?.car4S}
+                      {" vnđ"}
+                    </Text>
+                  </View>
+                  <View style={{ flexDirection: "row", paddingLeft: 20 }}>
+                    <Text style={{ fontSize: 11 }}>
+                      {distance}-{duration}
+                    </Text>
+                  </View>
+                </Card>
+
+                <Card
+                  style={{
+                    flexDirection: "column",
+                    width: "100%",
+                    paddingLeft: -24,
+                    paddingRight: -24,
+                    backgroundColor: ind === 3 ? "#808080" : "#FFFFFF",
+                  }}
+                  appearance="ghost"
+                  onPress={() => setInd(3)}
+                >
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Button appearance="ghost" accessoryLeft={CarIcon}>
+                      Car7s
+                    </Button>
+                    <Text>
+                      {prices?.data?.car7S}
+                      {" vnđ"}
+                    </Text>
                   </View>
                   <View style={{ flexDirection: "row", paddingLeft: 20 }}>
                     <Text style={{ fontSize: 11 }}>

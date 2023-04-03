@@ -25,7 +25,7 @@ export const Login = (props) => {
   );
 
   const onClickLogin = async () => {
-    return loginMutation.mutate({ phone, email, password });
+    return await loginMutation.mutate({ phone, email, password });
   };
 
   const onClickForgot = async () => {

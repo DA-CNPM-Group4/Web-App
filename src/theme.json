@@ -1,0 +1,198 @@
+{
+    "components": {
+        "BottomNavigation": {
+            "appearances": {
+                "default": {
+                    "mapping": {
+                        "minHeight": 52,
+                        "paddingVertical": 0,
+                        "backgroundColor": "#f0f0f0",
+                        "indicatorHeight": 52,
+                        "indicatorBackgroundColor": "#ebebeb"
+                    }
+                },
+                "noIndicator": {
+                    "mapping": {
+                        "indicatorHeight": 0,
+                        "indicatorBackgroundColor": "transparent"
+                    }
+                }
+            }
+        },
+        "BottomNavigationTab": {
+            "appearances": {
+                "default": {
+                    "mapping": {
+                        "textColor": "#616161",
+                        "iconTintColor": "#616161",
+                        "state": {
+                            "selected": {
+                                "textColor": "#5b5fc7",
+                                "iconTintColor": "#5b5fc7"
+                            },
+                            "hover": {
+                                "textColor": "#5b5fc7",
+                                "iconTintColor": "#5b5fc7"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "ListItem": {
+            "appearances": {
+                "default": {
+                    "mapping": {
+                        "paddingHorizontal": 4,
+                        "paddingVertical": 4
+                    }
+                }
+            }
+        },
+        "Input": {
+            "appearances": {
+                "default": {
+                    "mapping": {
+                        "paddingHorizontal": 4,
+                        "paddingVertical": 4
+                    },
+                    "variantGroups": {
+                        "status": {
+                            "ss": {
+                                "borderColor": "border-basic-color-4",
+                                "backgroundColor": "background-basic-color-2",
+                                "textColor": "text-basic-color",
+                                "labelColor": "text-hint-color",
+                                "captionColor": "text-hint-color",
+                                "placeholderColor": "text-hint-color",
+                                "iconTintColor": "text-hint-color",
+                                "state": {
+                                    "focused": {
+                                        "borderColor": "color-primary-default",
+                                        "backgroundColor": "background-basic-color-1",
+                                        "iconTintColor": "text-primary-color"
+                                    },
+                                    "hover": {
+                                        "borderColor": "border-basic-color-4",
+                                        "backgroundColor": "background-basic-color-3"
+                                    },
+                                    "disabled": {
+                                        "borderColor": "border-basic-color-4",
+                                        "backgroundColor": "background-basic-color-2",
+                                        "textColor": "text-disabled-color",
+                                        "labelColor": "text-disabled-color",
+                                        "captionColor": "text-disabled-color",
+                                        "placeholderColor": "text-disabled-color",
+                                        "iconTintColor": "text-disabled-color"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "Datepicker": {
+            "appearances": {
+                "ioc": {
+                    "mapping": {
+                    },
+                    "variantGroups": {
+                        "status": {
+                            "basic": {
+                                "backgroundColor": "white",
+                                "borderColor": "white",
+                                "state": {
+                                    "active": {
+                                        "backgroundColor": "white",
+                                        "borderColor": "white"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },"ioc-create": {
+                    "mapping": {
+                    },
+                    "variantGroups": {
+                        "status": {
+                            "basic": {
+                                "backgroundColor": "white",
+                                "borderColor": "white",
+                                "state": {
+                                    "active": {
+                                        "textColor":"#222b45",
+                                        "backgroundColor": "white",
+                                        "borderColor": "white"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },"Select": {
+            "appearances": {
+                "ioc": {
+                    "mapping": {
+                        "labelFontWeight":"400"
+                    },
+                    "variantGroups": {
+                        "status": {
+                            "basic": {
+                                "textColor":"#8F9BB3",
+                                "textFontWeight":"normal",
+                                "textFontSize": 152,
+                                "backgroundColor": "white",
+                                "borderColor": "#e4e9f2",
+                                "state": {
+                                    "active": {
+                                        "backgroundColor": "white",
+                                        "borderColor": "white"
+                                    },"disabled": {
+                                        "backgroundColor": "white",
+                                        "borderColor": "white"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },"SelectOption": {
+            "appearances": {
+                "ioc": {
+                    "mapping": {
+                        "textColor":"#8F9BB3",
+                        "textFontWeight":"normal",
+                        "state": {
+                            "hover": {
+                                "iconTintColor": "text-primary-hover-color",
+                                "backgroundColor": "color-basic-transparent-hover",
+                                "textFontWeight":"normal"
+                                
+                            },
+                            "active": {
+                                "textColor":"#8F9BB3",
+                                "backgroundColor": "color-basic-transparent-active",
+                                "textFontWeight":"normal"
+                            },
+                            "selected": {
+                                "backgroundColor": "#0d6efd",
+                                "textColor":"#FFFFFF",
+                                "textFontWeight":"normal",
+                                "iconTintColor": "text-primary-color"
+                            },
+                            "selected.hover": {
+                                "background-color": "color-primary-transparent-100",
+                                "textFontWeight":"normal",
+                                "textColor":"#8F9BB3"
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+}

@@ -9,6 +9,7 @@ import {
 } from "@ui-kitten/components";
 import { Navigate, useNavigate } from "react-router-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import Icon1 from "react-native-vector-icons/Ionicons";
 import { StyleSheet, View } from "react-native";
 import { useQuery } from "react-query";
 import {
@@ -30,13 +31,18 @@ const AvartarIcon = (props) => (
   <Icon {...props} style={styles.icon} name="user-circle" color="#000000" />
 );
 const GreenIcon = (props) => (
-  <Icon {...props} style={styles.icon} name="dot-circle" color="#62EE20" />
+  <Icon1 {...props} style={styles.icon1} name="locate-sharp" color="#62EE20" />
 );
 const RedIcon = (props) => (
-  <Icon {...props} style={styles.icon} name="dot-circle" color="#EE4520" />
+  <Icon1
+    {...props}
+    style={styles.icon1}
+    name="location-sharp"
+    color="#EE4520"
+  />
 );
 const StarIcon = (props) => (
-  <Icon {...props} style={styles.icon} name="star" color="#EDCB1C" />
+  <Icon {...props} style={styles.icon1} name="star" color="#EDCB1C" />
 );
 
 export const Customers = (props) => {
@@ -122,7 +128,7 @@ export const Customers = (props) => {
       .then((snapshot) => {
         if (snapshot.exists()) {
           console.log(snapshot.val());
-          return snapshot.val();
+          return snapshot.val()?.location;
         } else {
           console.log("Driver null");
           return null;
@@ -154,12 +160,13 @@ export const Customers = (props) => {
   }, [directionsResponse]);
 
   useEffect(() => {
+    if (origin === null || destination === null) return;
     console.log(origin);
     console.log(destination);
     calculateRoute();
     const interval = setInterval(() => {
       OnClickTrip(tripId);
-    }, 5 * 1000);
+    }, 20 * 1000);
     return () => clearInterval(interval);
   }, [origin, destination]);
 
@@ -179,7 +186,7 @@ export const Customers = (props) => {
 
   const [map, setMap] = React.useState(/** @type google.maps.Map */ null);
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyDIH4e-UOIM2oi0m9w1yUXp0-DHR4y_7DI",
+    googleMapsApiKey: "AIzaSyDvk1gd475Wq8f4U3hy8sXXLKk2dqK_g1g",
     libraries: ["places"],
   });
 
@@ -191,6 +198,7 @@ export const Customers = (props) => {
     <Icon {...props} style={styles.icon} name="check-square" color="#23B000" />
   );
   const [Dname, setDName] = React.useState("");
+  const [vehicleType, setvehicleType] = React.useState("Motorbike");
   const [Passengers, setP] = React.useState<any>(null);
   const [Drivers, setD] = React.useState<any>(null);
 
@@ -208,7 +216,7 @@ export const Customers = (props) => {
   const [price, setPrice] = React.useState("");
   const [trip, setTrip] = React.useState("");
   const [flag, setFlag] = React.useState(false);
-  const rootData = useQuery("/", () => getListTrip());
+  const rootData = useQuery(["", "/"], () => getListTrip());
   const [rootDataProcess, setRootDataProcess] = React.useState<any>(null);
 
   useEffect(() => {
@@ -249,7 +257,8 @@ export const Customers = (props) => {
         onPress={() => {
           setDName(item?.DriverName);
           setCName(item?.PassengerName);
-          setDistance(item?.distance);
+          setvehicleType(item?.vehicleType);
+          setDistance(item?.distance?.toFixed(2));
           setStartAdd(item?.startAddress);
           setEndAdd(item?.destination);
           setPrice(item?.price);
@@ -357,7 +366,7 @@ export const Customers = (props) => {
             }}
           >
             <Text numberOfLines={1} style={{ fontSize: 13, width: "100%" }}>
-              {item?.distance}
+              {item?.distance?.toFixed(2)}
             </Text>
           </View>
         </View>
@@ -501,62 +510,161 @@ export const Customers = (props) => {
             flex: 1,
             alignItems: "center",
             justifyContent: "flex-start",
-            width: "80%",
+            width: "100%",
+            paddingLeft: 20,
+            paddingVertical: 20,
+            paddingRight: 20,
+            flexDirection: "row",
           }}
         >
           <View
             style={{
+              flex: 1,
+              alignItems: "center",
               justifyContent: "flex-start",
-              width: "100%",
-              paddingLeft: 20,
-              paddingVertical: 20,
-              flexDirection: "row",
-            }}
-          >
-            <Button
-              appearance="ghost"
-              accessoryLeft={BackIcon}
-              onPress={() => {
-                setTripId("");
-                setOrigin(null);
-                setDestination(null);
-                setOriginb(null);
-                setDestinationb(null);
-                setInfo(false);
-                setDirectionsResponse(null);
-              }}
-            ></Button>
-            <Text style={{ fontSize: 25 }} category="s1">
-              Trip Infomation
-            </Text>
-          </View>
-          <View
-            style={{
-              paddingLeft: 20,
-              paddingVertical: 20,
-              width: "100%",
-              justifyContent: "flex-start",
-              alignItems: "flex-start",
+              width: "40%",
+              paddingRight: 5,
               flexDirection: "column",
             }}
           >
-            <Text style={{ fontSize: 20, paddingVertical: 5 }}>
-              Mã chuyến đi: {trip}
-            </Text>
-            <View style={{ flexDirection: "row", paddingVertical: 5 }}>
-              <AvartarIcon></AvartarIcon>
-              <Text>Driver: {Dname}</Text>
+            <View
+              style={{
+                justifyContent: "flex-start",
+                width: "100%",
+                paddingLeft: 20,
+                paddingVertical: 20,
+                flexDirection: "row",
+              }}
+            >
+              <Button
+                appearance="ghost"
+                accessoryLeft={BackIcon}
+                onPress={() => {
+                  setTripId("");
+                  setOrigin(null);
+                  setDestination(null);
+                  setOriginb(null);
+                  setDestinationb(null);
+                  setInfo(false);
+                  setDirectionsResponse(null);
+                }}
+              ></Button>
+              <Text style={{ fontSize: 25 }} category="s1">
+                Trip Infomation
+              </Text>
             </View>
-            <View style={{ flexDirection: "row", paddingVertical: 5 }}>
-              <AvartarIcon></AvartarIcon>
-              <Text>Customer: {Cname}</Text>
+            <View
+              style={{
+                paddingLeft: 20,
+                paddingVertical: 20,
+                width: "100%",
+                justifyContent: "flex-start",
+                alignItems: "flex-start",
+                flexDirection: "column",
+              }}
+            >
+              <Text style={{ fontSize: 20, paddingVertical: 5 }}>
+                TripId: {trip}
+              </Text>
+              <View style={{ flexDirection: "row", paddingVertical: 5 }}>
+                <AvartarIcon></AvartarIcon>
+                <Text>Driver: {Dname}</Text>
+              </View>
+              <View style={{ flexDirection: "row", paddingVertical: 5 }}>
+                <AvartarIcon></AvartarIcon>
+                <Text>Customer: {Cname}</Text>
+              </View>
+              <Text style={{ paddingVertical: 20, fontSize: 20 }}>
+                Total payable: {price}
+                {" vnđ"}
+              </Text>
             </View>
-            <Text style={{ paddingVertical: 20, fontSize: 20 }}>
-              Tổng phải trả: {"       "}
-              {price}
-            </Text>
+            <View
+              style={{
+                paddingLeft: 20,
+                paddingVertical: 20,
+                width: "100%",
+                justifyContent: "flex-start",
+                alignItems: "flex-start",
+                flexDirection: "column",
+              }}
+            >
+              <View
+                style={{
+                  paddingVertical: 5,
+                  width: "100%",
+                  justifyContent: "space-between",
+                  flexDirection: "row",
+                  paddingRight: 20,
+                }}
+              >
+                <Text style={{ fontSize: 20 }}>{vehicleType}</Text>
+                <Text style={{ fontSize: 20 }}>{distance} km</Text>
+              </View>
+              <View
+                style={{
+                  paddingVertical: 5,
+                  width: "100%",
+                  justifyContent: "space-between",
+                  flexDirection: "column",
+                  paddingRight: 20,
+                }}
+              >
+                <View style={{ flexDirection: "row" }}>
+                  <GreenIcon></GreenIcon>
+                  <View
+                    style={{
+                      width: "100%",
+                      paddingLeft: 10,
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Text style={{ fontSize: 16 }}>{startAdd}</Text>
+                    <Text style={{ fontSize: 14 }}>1:35PM</Text>
+                  </View>
+                </View>
+              </View>
+              <View
+                style={{
+                  paddingVertical: 5,
+                  width: "100%",
+                  justifyContent: "space-between",
+                  flexDirection: "column",
+                  paddingRight: 20,
+                }}
+              >
+                <View style={{ flexDirection: "row" }}>
+                  <RedIcon></RedIcon>
+                  <View
+                    style={{
+                      width: "100%",
+                      paddingLeft: 10,
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Text style={{ fontSize: 16 }}>{EndAdd}</Text>
+                    <Text style={{ fontSize: 14 }}>1:55PM</Text>
+                  </View>
+                </View>
+              </View>
+              <View
+                style={{
+                  paddingVertical: 5,
+                  width: "100%",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  flexDirection: "row",
+                  paddingRight: 20,
+                }}
+              >
+                <Text style={{ fontSize: 20 }}>Trip review:</Text>
+                <View style={{ paddingHorizontal: 5 }}></View>
+                <Text style={{ fontSize: 20 }}>4 </Text>
+                <StarIcon></StarIcon>
+              </View>
+            </View>
           </View>
-          <View style={{ width: "60%", height: "30%" }}>
+          <View style={{ width: "70%", height: "80%" }}>
             {!isLoaded && <Text>loading....</Text>}
             {isLoaded && (
               <GoogleMap
@@ -594,77 +702,6 @@ export const Customers = (props) => {
               </GoogleMap>
             )}
           </View>
-          <View
-            style={{
-              paddingLeft: 20,
-              paddingVertical: 20,
-              width: "100%",
-              justifyContent: "flex-start",
-              alignItems: "flex-start",
-              flexDirection: "column",
-            }}
-          >
-            <View
-              style={{
-                paddingVertical: 5,
-                width: "100%",
-                justifyContent: "space-between",
-                flexDirection: "row",
-                paddingRight: 20,
-              }}
-            >
-              <Text style={{ fontSize: 20 }}>GrabBike</Text>
-              <Text style={{ fontSize: 20 }}>{distance} - 7 mins</Text>
-            </View>
-            <View
-              style={{
-                paddingVertical: 5,
-                width: "100%",
-                justifyContent: "space-between",
-                flexDirection: "column",
-                paddingRight: 20,
-              }}
-            >
-              <View style={{ flexDirection: "row" }}>
-                <GreenIcon></GreenIcon>
-                <View style={{ paddingLeft: 10, flexDirection: "column" }}>
-                  <Text style={{ fontSize: 16 }}>{startAdd}</Text>
-                  <Text style={{ fontSize: 14 }}>1:35PM</Text>
-                </View>
-              </View>
-            </View>
-            <View
-              style={{
-                paddingVertical: 5,
-                width: "100%",
-                justifyContent: "space-between",
-                flexDirection: "column",
-                paddingRight: 20,
-              }}
-            >
-              <View style={{ flexDirection: "row" }}>
-                <RedIcon></RedIcon>
-                <View style={{ paddingLeft: 10, flexDirection: "column" }}>
-                  <Text style={{ fontSize: 16 }}>{EndAdd}</Text>
-                  <Text style={{ fontSize: 14 }}>1:55PM</Text>
-                </View>
-              </View>
-            </View>
-            <View
-              style={{
-                paddingVertical: 5,
-                width: "100%",
-                justifyContent: "flex-start",
-                flexDirection: "row",
-                paddingRight: 20,
-              }}
-            >
-              <Text style={{ fontSize: 20 }}>Đánh giá chuyến đi</Text>
-              <View style={{ paddingHorizontal: 20 }}></View>
-              <Text style={{ fontSize: 20 }}>4 </Text>
-              <StarIcon></StarIcon>
-            </View>
-          </View>
         </Layout>
       )}
     </Layout>
@@ -681,6 +718,20 @@ const styles = StyleSheet.create({
   icon: {
     paddingLeft: 3,
     paddingRight: 3,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  icon2: {
+    paddingLeft: 3,
+    paddingRight: 3,
+    fontSize: 60,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  icon1: {
+    fontSize: 20,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",

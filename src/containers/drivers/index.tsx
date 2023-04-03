@@ -21,7 +21,9 @@ export const Customers = (props) => {
     phone: "0123456789",
     address: "DH KHTN TP HCM",
   });
-
+  const AvartarIcon = (props) => (
+    <Icon {...props} style={styles.icon2} name="user-circle" color="#000000" />
+  );
   const [info, setInfo] = React.useState(false);
   const BackIcon = (props) => (
     <Icon {...props} style={styles.icon} name="arrow-left" color="#000000" />
@@ -41,7 +43,7 @@ export const Customers = (props) => {
   }, [status]);
 
   const data = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
-  const rootData = useQuery("dlumens", () => getListDriver());
+  const rootData = useQuery("drivers", () => getListDriver());
 
   useEffect(() => {
     console.log(rootData.data);
@@ -297,10 +299,15 @@ export const Customers = (props) => {
                   View Profile
                 </Text>
               </View>
-              <View style={{ borderWidth: 1, width: 100, height: 100 }}>
-                <Text style={{ fontSize: 25 }} category="s1">
-                  Image
-                </Text>
+              <View
+                style={{
+                  width: 100,
+                  height: 100,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <AvartarIcon></AvartarIcon>
               </View>
             </View>
             <View
@@ -537,6 +544,14 @@ const styles = StyleSheet.create({
   icon: {
     paddingLeft: 3,
     paddingRight: 3,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  icon2: {
+    paddingLeft: 3,
+    paddingRight: 3,
+    fontSize: 100,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",

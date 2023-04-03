@@ -20,6 +20,7 @@ export interface User {
 export interface IAuthContext {
   signIn: (payload: { phone: string; email: string; password: string }) => void;
   signOut: () => void;
+  updateUser: (payload: { name: string; address: string }) => void;
   user: User;
 }
 
@@ -32,6 +33,7 @@ export const useProviderAuth = () => {
   if (Platform.OS === "web") {
     previousToken = localStorage.getItem("accessToken");
 
+    console.log(previousToken);
     previousRefeshToken = localStorage.getItem("refreshToken");
 
     previousAccountId = localStorage.getItem("accountId");
@@ -40,6 +42,7 @@ export const useProviderAuth = () => {
       useEffect(() => {
         const userinfo = getInfoUser({ accountId: previousAccountId }).then(
           (useri) => {
+            console.log(1);
             setUser({
               accessToken: previousToken,
               refreshToken: previousRefeshToken,
@@ -64,6 +67,19 @@ export const useProviderAuth = () => {
     ...previousUser,
   });
 
+  const updateUser = async ({ name, address }) => {
+    const userinfo = await getInfoUser({ accountId: user.accountId }).then(
+      (useri) => {
+        console.log(1);
+        setUser({
+          name: name,
+          address: address,
+          ...user,
+        });
+      }
+    );
+  };
+
   const getUserInfo = async (accessToken, refreshToken, accountId) => {
     if (Platform.OS === "web") {
       localStorage.setItem("accessToken", accessToken);
@@ -71,10 +87,10 @@ export const useProviderAuth = () => {
       localStorage.setItem("accountId", accountId);
     }
 
-    await setUser({
-      accessToken,
-      refreshToken,
-      accountId,
+    setUser({
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      accountId: accountId,
       ...user,
     });
   };
@@ -107,6 +123,7 @@ export const useProviderAuth = () => {
 
   return {
     user,
+    updateUser,
     signIn,
     signOut,
   };

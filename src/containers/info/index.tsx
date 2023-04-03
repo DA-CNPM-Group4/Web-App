@@ -38,6 +38,9 @@ const QuestionIcon = (props) => (
 const CheckIcon = (props) => (
   <Icon {...props} style={styles.icon} name="check-square" color="#23B000" />
 );
+const AvartarIcon = (props) => (
+  <Icon {...props} style={styles.icon2} name="user-circle" color="#000000" />
+);
 export const Customers = (props) => {
   const navigate = useNavigate();
   const [status, setStatus] = React.useState({
@@ -53,6 +56,7 @@ export const Customers = (props) => {
   const [phone, setPhone] = React.useState(status.phone);
   const [address, setAddress] = React.useState(status.address);
   const [password, setPassword] = React.useState(status.password);
+  const [isF, setIsf] = React.useState(true);
   const auth = useContext(authContext);
 
   const onClickUpdateInfo = async () => {
@@ -65,12 +69,18 @@ export const Customers = (props) => {
       Address: address,
       Gender: auth.user.gender,
     });
+    await auth.updateUser(name, address);
+    setIsf(true);
   };
+  console.log(auth.user);
   useEffect(() => {
-    setName(auth.user?.name);
-    setEmail(auth.user?.email);
-    setPhone(auth.user?.phone);
-    setAddress(auth.user?.address);
+    if (isF) {
+      setName(auth.user?.name);
+      setEmail(auth.user?.email);
+      setPhone(auth.user?.phone);
+      setAddress(auth.user?.address);
+      setIsf(false);
+    }
   }, [auth, auth.user]);
 
   return (
@@ -160,10 +170,15 @@ export const Customers = (props) => {
             <Text style={{ fontSize: 25 }} category="s1">
               Edit Profile
             </Text>
-            <View style={{ borderWidth: 1, width: 100, height: 100 }}>
-              <Text style={{ fontSize: 25 }} category="s1">
-                Image
-              </Text>
+            <View
+              style={{
+                width: 100,
+                height: 100,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <AvartarIcon></AvartarIcon>
             </View>
           </View>
           <View
@@ -364,6 +379,14 @@ export const Customers = (props) => {
 };
 
 const styles = StyleSheet.create({
+  icon2: {
+    paddingLeft: 3,
+    paddingRight: 3,
+    fontSize: 100,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",

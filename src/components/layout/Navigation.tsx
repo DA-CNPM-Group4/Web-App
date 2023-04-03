@@ -130,30 +130,12 @@ export const Navigation = () => {
           />
           <MenuItem
             style={{ backgroundColor: "#F6F8F9" }}
-            title="Readers"
-            accessoryLeft={NewspaperIcon}
-            // onPressIn={}
-          />
-          <MenuItem
-            style={{ backgroundColor: "#F6F8F9" }}
             title="Reports"
             accessoryLeft={FileIcon}
             // onPressIn={}
           />
         </View>
         <View style={styles.MenuItem}>
-          <MenuItem
-            style={{ backgroundColor: "#F6F8F9" }}
-            title="Developers"
-            accessoryLeft={TerminalIcon}
-            // onPressIn={}
-          />
-          <MenuItem
-            style={{ backgroundColor: "#F6F8F9" }}
-            title="View test data"
-            accessoryLeft={EyeIcon}
-            // onPressIn={}
-          />
           <MenuItem
             style={{ backgroundColor: "#F6F8F9" }}
             title="Setting"

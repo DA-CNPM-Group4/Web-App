@@ -24,11 +24,12 @@ const token = false;
 export const App = () => {
   const auth = useContext(authContext);
 
-  if (auth.user?.accountId) {
+  if (auth.user?.accountId && localStorage.getItem("accountId") != undefined) {
     return (
       <MainLayout>
         <Routes>
           <Route path="/" element={<ListOrder />} />
+          <Route path="" element={<ListOrder />} />
           <Route path="/create" element={<CreateTrip />} />
           <Route path="/drivers" element={<Drivers />} />
           <Route path="/customers" element={<Customers />} />
