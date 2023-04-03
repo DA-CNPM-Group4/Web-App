@@ -69,7 +69,7 @@ export const Customers = (props) => {
       Address: address,
       Gender: auth.user.gender,
     });
-    await auth.updateUser(name, address);
+    await auth.updateUser({ name, address });
     setIsf(true);
   };
   console.log(auth.user);
