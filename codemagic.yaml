@@ -1,5 +1,8 @@
 workflows:
   my-workflow:
+    environment:
+      groups:
+        - webapp
     scripts:
       # Install dependencies
       - npm install
@@ -8,7 +11,7 @@ workflows:
       # Build the website
       - npx expo export:web
       # Deploy to Netlify
-      - netlify deploy --auth gUApKAogZF3Qtc-ibWV9sUA1ZGai7vv14NNNocIfSLc --site 25aabd83-c303-4697-af55-cffb8c4f4040 --prod --dir ./web-build
+      - netlify deploy --auth $NETLIFY_AUTH_TOKEN --site $side_id --prod --dir ./web-build
     artifacts:
       - web-build/index.html
       - web-build/static/**
@@ -22,6 +25,6 @@ workflows:
       events:
         - push
       branch_patterns: 
-        - pattern: develop
-          include: false
+        - pattern: main-backup
+          include: true
       cancel_previous_builds: true
