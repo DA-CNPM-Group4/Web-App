@@ -22,6 +22,7 @@ import {
 } from "@react-google-maps/api";
 import { getPrice, sendTripRequest } from "../../services/getapi";
 import { authContext } from "../../hooks/authentication";
+import { API_Key } from "../../config";
 
 const BackIcon = (props) => (
   <Icon {...props} style={styles.icon} name="arrow-left" color="#000000" />
@@ -38,7 +39,7 @@ export const CreateTrip = (props) => {
   const auth = useContext(authContext);
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyDIH4e-UOIM2oi0m9w1yUXp0-DHR4y_7DI",
+    googleMapsApiKey: API_Key,
     libraries: ["places"],
   });
 
@@ -252,7 +253,7 @@ export const CreateTrip = (props) => {
                     width: "100%",
                     paddingLeft: -24,
                     paddingRight: -24,
-                    backgroundColor: ind === 1 ? "#808080" : "#FFFFFF",
+                    backgroundColor: ind === 1 ? "#cfcccc" : "#FFFFFF",
                   }}
                   appearance="ghost"
                   onPress={() => setInd(1)}
@@ -267,7 +268,10 @@ export const CreateTrip = (props) => {
                     <Button appearance="ghost" accessoryLeft={MotorIcon}>
                       Motobike
                     </Button>
-                    <Text>{prices?.data?.motorbike}</Text>
+                    <Text>
+                      {prices?.data?.motorbike}
+                      {" vnđ"}
+                    </Text>
                   </View>
                   <View style={{ flexDirection: "row", paddingLeft: 20 }}>
                     <Text style={{ fontSize: 11 }}>
@@ -282,7 +286,7 @@ export const CreateTrip = (props) => {
                     width: "100%",
                     paddingLeft: -24,
                     paddingRight: -24,
-                    backgroundColor: ind === 2 ? "#808080" : "#FFFFFF",
+                    backgroundColor: ind === 2 ? "#cfcccc" : "#FFFFFF",
                   }}
                   appearance="ghost"
                   onPress={() => setInd(2)}
@@ -315,7 +319,7 @@ export const CreateTrip = (props) => {
                     width: "100%",
                     paddingLeft: -24,
                     paddingRight: -24,
-                    backgroundColor: ind === 3 ? "#808080" : "#FFFFFF",
+                    backgroundColor: ind === 3 ? "#cfcccc" : "#FFFFFF",
                   }}
                   appearance="ghost"
                   onPress={() => setInd(3)}

@@ -24,7 +24,7 @@ const token = false;
 export const App = () => {
   const auth = useContext(authContext);
 
-  if (auth.user?.accountId && localStorage.getItem("accountId") != undefined) {
+  if (true) {
     return (
       <MainLayout>
         <Routes>

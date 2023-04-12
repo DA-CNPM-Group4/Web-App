@@ -26,6 +26,7 @@ import { authContext } from "../../hooks/authentication";
 import { getInfoDriver, getInfoPassenger } from "../../services/authentication";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, child, get } from "firebase/database";
+import { API_Key } from "../../config";
 
 const AvartarIcon = (props) => (
   <Icon {...props} style={styles.icon} name="user-circle" color="#000000" />
@@ -186,7 +187,7 @@ export const Customers = (props) => {
 
   const [map, setMap] = React.useState(/** @type google.maps.Map */ null);
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyDvk1gd475Wq8f4U3hy8sXXLKk2dqK_g1g",
+    googleMapsApiKey: API_Key,
     libraries: ["places"],
   });
 

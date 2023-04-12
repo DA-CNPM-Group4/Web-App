@@ -1,15 +1,15 @@
 workflows:
-  # This workflow runs on every commit to the master branch
   my-workflow:
     scripts:
       # Install dependencies
       - npm install
+      # Install Netlify CLI
+      - npm install -g netlify-cli
       # Build the website
       - npx expo export:web
+      # Deploy to Netlify
+      - netlify deploy --auth $NETLIFY_AUTH_TOKEN --site [site_id] --prod --dir ./web-build
     artifacts:
-      # Specify the files you want to save as artifacts here
-      # For example:
-      # - build/*
       - web-build/index.html
       - web-build/static/**
       - web-build/asset-manifest.json
