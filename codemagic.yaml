@@ -11,7 +11,7 @@ workflows:
       # Build the website
       - npx expo export:web
       # Deploy to Netlify
-      - netlify deploy --auth $NETLIFY_AUTH_TOKEN --site $side_id --prod --dir ./web-build
+      - netlify deploy --auth $NETLIFY_AUTH_TOKEN --site $site_id --prod --dir ./web-build
     artifacts:
       - web-build/index.html
       - web-build/static/**
@@ -25,6 +25,6 @@ workflows:
       events:
         - push
       branch_patterns: 
-        - pattern: main-backup
+        - pattern: '*'
           include: true
       cancel_previous_builds: true
