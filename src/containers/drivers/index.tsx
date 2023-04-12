@@ -49,6 +49,7 @@ export const Customers = (props) => {
     console.log(rootData.data);
   }, [rootData.isFetched, rootData.isFetching]);
 
+  console.log("a");
   const renderItem = ({ item, index }) => {
     return (
       <ListItem
