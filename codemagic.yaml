@@ -3,6 +3,7 @@ workflows:
     environment:
       groups:
         - webapp
+    # https://docs.codemagic.io/yaml-quick-start/building-a-react-native-app/#:~:text=sample.reactnative%22%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D-,Configure%20scripts%20to%20build%20the%20app,-Add%20the%20following
     scripts:
       # Install dependencies
       - npm install
@@ -12,15 +13,21 @@ workflows:
       - npx expo export:web
       # Deploy to Netlify
       - netlify deploy --auth $NETLIFY_AUTH_TOKEN --site $site_id --prod --dir ./web-build
+    # https://docs.codemagic.io/yaml-basic-configuration/yaml-getting-started/#:~:text=There%20are%20example%20scripts%20available%20for%20building
     artifacts:
       - web-build/index.html
       - web-build/static/**
       - web-build/asset-manifest.json
+    # https://docs.codemagic.io/yaml-notification/email/
     publishing:
       email:
         recipients:
           - thanhdat9096@gmail.com
           - loichuanhuynh@gmail.com
+        notify:
+          success: true # To receive a notification when a build succeeds
+          failure: true # To receive a notification when a build fails
+    # https://docs.codemagic.io/yaml-basic-configuration/yaml-getting-started/#triggering
     triggering:
       events:
         - push
@@ -28,3 +35,5 @@ workflows:
         - pattern: main-backup
           include: true
       cancel_previous_builds: true
+# Setting up webhooks for Github
+# https://docs.codemagic.io/yaml-running-builds/webhooks/#setting-up-webhooks-for-github
