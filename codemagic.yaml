@@ -25,6 +25,6 @@ workflows:
       events:
         - push
       branch_patterns: 
-        - pattern: '*'
+        - pattern: main-backup
           include: true
       cancel_previous_builds: true
