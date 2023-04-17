@@ -150,6 +150,7 @@ export const Navigation = () => {
             accessoryLeft={LogOutIcon}
             onPressIn={() => {
               auth.signOut();
+              navigate("/");
             }}
           />
         </View>

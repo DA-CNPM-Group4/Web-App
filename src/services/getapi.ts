@@ -16,9 +16,18 @@ export const getListTrip = async () => {
   return (await sendAuthenicatedRequest('/Trip/Trip/GetTrips', 'GET', null)).data;
 };
 
+export const getListTripbyDriver = async ({id}) => {
+  return (await sendAuthenicatedRequest(`/Trip/Trip/GetDriverTrips?driverId=${id}`, 'GET', null)).data;
+};
+
+export const getListTripbyCustomer = async ({id}) => {
+  return (await sendAuthenicatedRequest(`/Trip/Trip/GetPassengerTrips?passengerId=${id}`, 'GET', null)).data;
+};
+
 export const getPrice = async (distance) => {
   return (await sendAuthenicatedRequest('/Trip/TripRequest/CalculatePrice?distance=' + distance, 'GET', null)).data;
 };
+
 
 export const sendTripRequest = async ({ PassengerId, StaffId, RequestStatus, PassengerNote, Distance, Destination, LatDesAddr, LongDesAddr, StartAddress, LatStartAddr, LongStartAddr, PassengerPhone, Price, VehicleType }) => {
   // const data = qs.stringify();

@@ -12,6 +12,8 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { MainLayout } from "./components/layout/MainLayout";
 import CreateTrip from "./containers/createtrip";
 import ListOrder from "./containers/listorder";
+import ListOrderCustomer from "./containers/listorderCustomer";
+import ListOrderDriver from "./containers/listorderDriver";
 import Drivers from "./containers/drivers";
 import Customers from "./containers/customers";
 import Info from "./containers/info";
@@ -24,12 +26,14 @@ const token = false;
 export const App = () => {
   const auth = useContext(authContext);
 
-  if (true) {
+  if (auth.user?.accountId) {
     return (
       <MainLayout>
         <Routes>
           <Route path="/" element={<ListOrder />} />
           <Route path="" element={<ListOrder />} />
+          <Route path="/listtripbycustomer" element={<ListOrderCustomer />} />
+          <Route path="/listtripbydriver" element={<ListOrderDriver />} />
           <Route path="/create" element={<CreateTrip />} />
           <Route path="/drivers" element={<Drivers />} />
           <Route path="/customers" element={<Customers />} />

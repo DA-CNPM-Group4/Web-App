@@ -21,7 +21,9 @@ export interface IAuthContext {
   signIn: (payload: { phone: string; email: string; password: string }) => void;
   signOut: () => void;
   updateUser: (payload: { name: string; address: string }) => void;
+  SetID: (payload: { id: string }) => void;
   user: User;
+  id: string;
 }
 
 export const useProviderAuth = () => {
@@ -31,41 +33,40 @@ export const useProviderAuth = () => {
   let previousAccountId = undefined;
 
   if (Platform.OS === "web") {
+    let flag = false;
     previousToken = localStorage.getItem("accessToken");
-
-    console.log(previousToken);
     previousRefeshToken = localStorage.getItem("refreshToken");
-
     previousAccountId = localStorage.getItem("accountId");
-
     if (previousToken && previousAccountId) {
-      useEffect(() => {
-        const userinfo = getInfoUser({ accountId: previousAccountId }).then(
-          (useri) => {
-            console.log(1);
-            setUser({
-              accessToken: previousToken,
-              refreshToken: previousRefeshToken,
-              accountId: previousAccountId,
-              name: useri.data?.data?.name,
-              identityNumber: useri.data?.data?.identityNumber,
-              email: useri.data?.data?.email,
-              gender: useri.data?.data?.gender,
-              phone: useri.data?.data?.phone,
-              address: useri.data?.data?.address,
-              ...user,
-            });
-          }
-        );
-      }, []);
+      if (flag) return;
+      flag = true;
+      const userinfo = getInfoUser({ accountId: previousAccountId }).then(
+        (useri) => {
+          setUser({
+            name: useri.data?.data?.name,
+            identityNumber: useri.data?.data?.identityNumber,
+            email: useri.data?.data?.email,
+            gender: useri.data?.data?.gender,
+            phone: useri.data?.data?.phone,
+            address: useri.data?.data?.address,
+            ...user,
+          });
+        }
+      );
     }
   }
+  const [id, setId] = useState("");
 
   const [user, setUser] = useState<User>({
     accessToken: previousToken,
     refreshToken: previousRefeshToken,
+    accountId: previousAccountId,
     ...previousUser,
   });
+
+  const SetID = ({ id }) => {
+    setId(id);
+  };
 
   const updateUser = async ({ name, address }) => {
     const userinfo = await getInfoUser({ accountId: user.accountId }).then(
@@ -81,27 +82,22 @@ export const useProviderAuth = () => {
   };
 
   const getUserInfo = async (accessToken, refreshToken, accountId) => {
-    if (Platform.OS === "web") {
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("accountId", accountId);
-    }
-
     setUser({
       accessToken: accessToken,
       refreshToken: refreshToken,
       accountId: accountId,
       ...user,
     });
+
+    if (Platform.OS === "web") {
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("accountId", accountId);
+    }
   };
 
   const signIn = async ({ phone, email, password }) => {
     const res = await login({ phone, email, password });
-    if (Platform.OS === "web") {
-      localStorage.setItem("accessToken", res.data?.data.accessToken);
-      localStorage.setItem("refreshToken", res.data?.data.refreshToken);
-      localStorage.setItem("accountId", res.data?.data.accountId);
-    }
 
     if (res.data.status == true) {
       await getUserInfo(
@@ -114,15 +110,16 @@ export const useProviderAuth = () => {
   };
 
   const signOut = () => {
+    setUser(null);
     if (Platform.OS === "web") {
       localStorage.clear();
     }
-
-    setUser(null);
   };
 
   return {
     user,
+    id,
+    SetID,
     updateUser,
     signIn,
     signOut,

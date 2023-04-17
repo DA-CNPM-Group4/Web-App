@@ -59,3 +59,13 @@ export const getInfoDriver = async ({accountId}) => {
   return await sendAuthenicatedRequest('/Info/Driver/GetDriverInfoById', 'POST',data);
 };
 
+export const ChangePassword = async ({cpwd, npwd}) => {
+
+  const data = JSON.stringify({
+    currentPassword: cpwd,
+    newPassword:npwd
+  });
+
+  return await sendAuthenicatedRequest('/Authentication/ChangePassword', 'POST',data);
+};
+

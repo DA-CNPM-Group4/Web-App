@@ -15,7 +15,7 @@ import { getListPassenger } from "../../services/getapi";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import Icon2 from "react-native-vector-icons/Feather";
 import { authContext } from "../../hooks/authentication";
-import { updateInfoUser } from "../../services/authentication";
+import { ChangePassword, updateInfoUser } from "../../services/authentication";
 
 const BackIcon = (props) => (
   <Icon {...props} style={styles.icon} name="arrow-left" color="#000000" />
@@ -55,7 +55,9 @@ export const Customers = (props) => {
   const [email, setEmail] = React.useState(status.email);
   const [phone, setPhone] = React.useState(status.phone);
   const [address, setAddress] = React.useState(status.address);
-  const [password, setPassword] = React.useState(status.password);
+  const [password, setPassword] = React.useState("");
+  const [npassword, setnPassword] = React.useState("");
+  const [pwd, setpwd] = React.useState(false);
   const [isF, setIsf] = React.useState(true);
   const auth = useContext(authContext);
 
@@ -71,6 +73,20 @@ export const Customers = (props) => {
     });
     await auth.updateUser({ name, address });
     setIsf(true);
+  };
+
+  const [isWarning, setIsWarning] = React.useState(false);
+
+  const onClickChangePwd = async () => {
+    const rp = await ChangePassword({ cpwd: password, npwd: npassword });
+    console.log(rp);
+    if (rp.data.status) {
+      setpwd(false);
+      console.log("Change Password Success");
+    } else {
+      setIsWarning(true);
+      console.log(rp.data.message);
+    }
   };
   console.log(auth.user);
   useEffect(() => {
@@ -117,11 +133,26 @@ export const Customers = (props) => {
             alignItems: "flex-start",
           }}
         >
-          <Button appearance="ghost" status="basic" accessoryLeft={EditIcon}>
+          <Button
+            appearance="ghost"
+            status="basic"
+            accessoryLeft={EditIcon}
+            onPress={() => {
+              setpwd(false);
+            }}
+          >
             Edit Profile
           </Button>
           <Button appearance="ghost" status="basic" accessoryLeft={NotiIcon}>
             Notification
+          </Button>
+          <Button
+            appearance="ghost"
+            status="basic"
+            accessoryLeft={NotiIcon}
+            onPress={() => setpwd(true)}
+          >
+            Change Password
           </Button>
           <Button appearance="ghost" status="basic" accessoryLeft={LockIcon}>
             Security
@@ -148,231 +179,350 @@ export const Customers = (props) => {
           paddingTop: 30,
         }}
       >
-        <View
-          style={{
-            width: "70%",
-            flexShrink: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-          }}
-        >
+        {!pwd && (
           <View
             style={{
-              justifyContent: "space-between",
-              flexDirection: "row",
-              width: "100%",
-              paddingLeft: 20,
-              paddingRight: 20,
-              paddingVertical: 20,
-            }}
-          >
-            <Text style={{ fontSize: 25 }} category="s1">
-              Edit Profile
-            </Text>
-            <View
-              style={{
-                width: 100,
-                height: 100,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <AvartarIcon></AvartarIcon>
-            </View>
-          </View>
-          <View
-            style={{
-              width: "100%",
+              width: "70%",
+              flexShrink: 1,
+              justifyContent: "center",
+              alignItems: "center",
               flexDirection: "column",
-              paddingHorizontal: 20,
-              paddingBottom: 10,
             }}
           >
-            <Text style={{ paddingVertical: 5, fontSize: 20 }} category="s1">
-              Name
-            </Text>
             <View
               style={{
-                borderColor: "#858585",
-                borderWidth: 1,
-                paddingHorizontal: 2,
-                paddingVertical: 2,
-                borderRadius: 10,
+                justifyContent: "space-between",
+                flexDirection: "row",
                 width: "100%",
+                paddingLeft: 20,
+                paddingRight: 20,
+                paddingVertical: 20,
               }}
             >
-              <Input
+              <Text style={{ fontSize: 25 }} category="s1">
+                Edit Profile
+              </Text>
+              <View
                 style={{
-                  width: "100%",
-                  borderWidth: 0,
-                  backgroundColor: "#FFFFFF",
-                }}
-                placeholder="Name....."
-                value={name}
-                onChangeText={(nextValue) => setName(nextValue)}
-              ></Input>
-            </View>
-          </View>
-          <View
-            style={{
-              width: "100%",
-              flexDirection: "column",
-              paddingHorizontal: 20,
-              paddingBottom: 10,
-            }}
-          >
-            <Text style={{ paddingVertical: 5, fontSize: 20 }} category="s1">
-              Email
-            </Text>
-            <View
-              style={{
-                borderColor: "#858585",
-                borderWidth: 1,
-                paddingHorizontal: 2,
-                paddingVertical: 2,
-                borderRadius: 10,
-                width: "100%",
-              }}
-            >
-              <Input
-                style={{
-                  width: "100%",
-                  borderWidth: 0,
-                  backgroundColor: "#FFFFFF",
-                }}
-                placeholder="Email....."
-                value={email}
-                accessoryRight={CheckIcon}
-                onChangeText={(nextValue) => setEmail(nextValue)}
-              ></Input>
-            </View>
-          </View>
-          <View
-            style={{
-              width: "100%",
-              flexDirection: "column",
-              paddingHorizontal: 20,
-              paddingBottom: 10,
-            }}
-          >
-            <Text style={{ paddingVertical: 5, fontSize: 20 }} category="s1">
-              Contact Number
-            </Text>
-            <View
-              style={{
-                borderColor: "#858585",
-                borderWidth: 1,
-                paddingHorizontal: 2,
-                paddingVertical: 2,
-                borderRadius: 10,
-                width: "100%",
-              }}
-            >
-              <Input
-                style={{
-                  width: "100%",
-                  borderWidth: 0,
-                  backgroundColor: "#FFFFFF",
-                }}
-                placeholder="Contact number....."
-                value={phone}
-                onChangeText={(nextValue) => setPhone(nextValue)}
-              ></Input>
-            </View>
-          </View>
-          <View
-            style={{
-              width: "100%",
-              flexDirection: "column",
-              paddingHorizontal: 20,
-              paddingBottom: 10,
-            }}
-          >
-            <Text style={{ paddingVertical: 5, fontSize: 20 }} category="s1">
-              Address
-            </Text>
-            <View
-              style={{
-                borderColor: "#858585",
-                borderWidth: 1,
-                paddingHorizontal: 2,
-                paddingVertical: 2,
-                borderRadius: 10,
-                width: "100%",
-              }}
-            >
-              <Input
-                style={{
-                  width: "100%",
-                  borderWidth: 0,
-                  backgroundColor: "#FFFFFF",
-                }}
-                placeholder="Address....."
-                value={address}
-                onChangeText={(nextValue) => setAddress(nextValue)}
-              ></Input>
-            </View>
-          </View>
-          <View
-            style={{
-              width: "100%",
-              flexDirection: "column",
-              paddingHorizontal: 20,
-              paddingBottom: 10,
-            }}
-          >
-            <Text style={{ paddingVertical: 5, fontSize: 20 }} category="s1">
-              Password
-            </Text>
-            <View
-              style={{
-                borderColor: "#858585",
-                borderWidth: 1,
-                paddingHorizontal: 2,
-                paddingVertical: 2,
-                borderRadius: 10,
-                width: "100%",
-              }}
-            >
-              <Input
-                style={{
-                  width: "100%",
-                  borderWidth: 0,
-                  backgroundColor: "#FFFFFF",
-                }}
-                placeholder="Password....."
-                value={password}
-                accessoryRight={CheckIcon}
-                onChangeText={(nextValue) => setPassword(nextValue)}
-              ></Input>
-            </View>
-          </View>
-
-          <View
-            style={{
-              width: "100%",
-              flexDirection: "row",
-              paddingHorizontal: 20,
-              paddingBottom: 20,
-              paddingTop: 10,
-            }}
-          >
-            <View style={{ paddingRight: 5 }}>
-              <Button appearance="outline">Cancel</Button>
-            </View>
-            <View style={{ paddingLeft: 5 }}>
-              <Button
-                style={{ paddingRight: 5 }}
-                onPress={() => {
-                  onClickUpdateInfo();
+                  width: 100,
+                  height: 100,
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                Save
-              </Button>
+                <AvartarIcon></AvartarIcon>
+              </View>
+            </View>
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "column",
+                paddingHorizontal: 20,
+                paddingBottom: 10,
+              }}
+            >
+              <Text style={{ paddingVertical: 5, fontSize: 20 }} category="s1">
+                Name
+              </Text>
+              <View
+                style={{
+                  borderColor: "#858585",
+                  borderWidth: 1,
+                  paddingHorizontal: 2,
+                  paddingVertical: 2,
+                  borderRadius: 10,
+                  width: "100%",
+                }}
+              >
+                <Input
+                  style={{
+                    width: "100%",
+                    borderWidth: 0,
+                    backgroundColor: "#FFFFFF",
+                  }}
+                  placeholder="Name....."
+                  value={name}
+                  onChangeText={(nextValue) => setName(nextValue)}
+                ></Input>
+              </View>
+            </View>
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "column",
+                paddingHorizontal: 20,
+                paddingBottom: 10,
+              }}
+            >
+              <Text style={{ paddingVertical: 5, fontSize: 20 }} category="s1">
+                Email
+              </Text>
+              <View
+                style={{
+                  borderColor: "#858585",
+                  borderWidth: 1,
+                  paddingHorizontal: 2,
+                  paddingVertical: 2,
+                  borderRadius: 10,
+                  width: "100%",
+                }}
+              >
+                <Input
+                  style={{
+                    width: "100%",
+                    borderWidth: 0,
+                    backgroundColor: "#FFFFFF",
+                  }}
+                  placeholder="Email....."
+                  value={email}
+                  accessoryRight={CheckIcon}
+                  onChangeText={(nextValue) => setEmail(nextValue)}
+                ></Input>
+              </View>
+            </View>
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "column",
+                paddingHorizontal: 20,
+                paddingBottom: 10,
+              }}
+            >
+              <Text style={{ paddingVertical: 5, fontSize: 20 }} category="s1">
+                Contact Number
+              </Text>
+              <View
+                style={{
+                  borderColor: "#858585",
+                  borderWidth: 1,
+                  paddingHorizontal: 2,
+                  paddingVertical: 2,
+                  borderRadius: 10,
+                  width: "100%",
+                }}
+              >
+                <Input
+                  style={{
+                    width: "100%",
+                    borderWidth: 0,
+                    backgroundColor: "#FFFFFF",
+                  }}
+                  placeholder="Contact number....."
+                  value={phone}
+                  onChangeText={(nextValue) => setPhone(nextValue)}
+                ></Input>
+              </View>
+            </View>
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "column",
+                paddingHorizontal: 20,
+                paddingBottom: 10,
+              }}
+            >
+              <Text style={{ paddingVertical: 5, fontSize: 20 }} category="s1">
+                Address
+              </Text>
+              <View
+                style={{
+                  borderColor: "#858585",
+                  borderWidth: 1,
+                  paddingHorizontal: 2,
+                  paddingVertical: 2,
+                  borderRadius: 10,
+                  width: "100%",
+                }}
+              >
+                <Input
+                  style={{
+                    width: "100%",
+                    borderWidth: 0,
+                    backgroundColor: "#FFFFFF",
+                  }}
+                  placeholder="Address....."
+                  value={address}
+                  onChangeText={(nextValue) => setAddress(nextValue)}
+                ></Input>
+              </View>
+            </View>
+
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "row",
+                paddingHorizontal: 20,
+                paddingBottom: 20,
+                paddingTop: 10,
+              }}
+            >
+              <View style={{ paddingRight: 5 }}>
+                <Button appearance="outline">Cancel</Button>
+              </View>
+              <View style={{ paddingLeft: 5 }}>
+                <Button
+                  style={{ paddingRight: 5 }}
+                  onPress={() => {
+                    onClickUpdateInfo();
+                  }}
+                >
+                  Save
+                </Button>
+              </View>
             </View>
           </View>
-        </View>
+        )}
+        {pwd && (
+          <View
+            style={{
+              width: "70%",
+              flexShrink: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <View
+              style={{
+                justifyContent: "space-between",
+                flexDirection: "row",
+                width: "100%",
+                paddingLeft: 20,
+                paddingRight: 20,
+                paddingVertical: 20,
+              }}
+            >
+              <Text style={{ fontSize: 25 }} category="s1">
+                Edit Profile
+              </Text>
+              <View
+                style={{
+                  width: 100,
+                  height: 100,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <AvartarIcon></AvartarIcon>
+              </View>
+            </View>
+            {isWarning && (
+              <View
+                style={{
+                  width: "100%",
+                  flexDirection: "column",
+                  paddingHorizontal: 20,
+                  paddingBottom: 10,
+                }}
+              >
+                <Text
+                  style={{ paddingVertical: 5, fontSize: 20, color: "red" }}
+                  category="s1"
+                >
+                  Change password failed!
+                </Text>
+              </View>
+            )}
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "column",
+                paddingHorizontal: 20,
+                paddingBottom: 10,
+              }}
+            >
+              <Text style={{ paddingVertical: 5, fontSize: 20 }} category="s1">
+                Current Password
+              </Text>
+              <View
+                style={{
+                  borderColor: "#858585",
+                  borderWidth: 1,
+                  paddingHorizontal: 2,
+                  paddingVertical: 2,
+                  borderRadius: 10,
+                  width: "100%",
+                }}
+              >
+                <Input
+                  style={{
+                    width: "100%",
+                    borderWidth: 0,
+                    backgroundColor: "#FFFFFF",
+                  }}
+                  placeholder="Current Password"
+                  value={password}
+                  onChangeText={(nextValue) => setPassword(nextValue)}
+                ></Input>
+              </View>
+            </View>
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "column",
+                paddingHorizontal: 20,
+                paddingBottom: 10,
+              }}
+            >
+              <Text style={{ paddingVertical: 5, fontSize: 20 }} category="s1">
+                New Password
+              </Text>
+              <View
+                style={{
+                  borderColor: "#858585",
+                  borderWidth: 1,
+                  paddingHorizontal: 2,
+                  paddingVertical: 2,
+                  borderRadius: 10,
+                  width: "100%",
+                }}
+              >
+                <Input
+                  style={{
+                    width: "100%",
+                    borderWidth: 0,
+                    backgroundColor: "#FFFFFF",
+                  }}
+                  placeholder="New Password"
+                  value={npassword}
+                  onChangeText={(nextValue) => setnPassword(nextValue)}
+                ></Input>
+              </View>
+            </View>
+
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "row",
+                paddingHorizontal: 20,
+                paddingBottom: 20,
+                paddingTop: 10,
+              }}
+            >
+              <View style={{ paddingRight: 5 }}>
+                <Button
+                  appearance="outline"
+                  onPress={() => {
+                    setpwd(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+              </View>
+
+              <View style={{ paddingLeft: 5 }}>
+                <Button
+                  style={{ paddingRight: 5 }}
+                  onPress={() => {
+                    onClickChangePwd();
+                  }}
+                >
+                  Change Password
+                </Button>
+              </View>
+            </View>
+          </View>
+        )}
       </View>
     </Layout>
   );

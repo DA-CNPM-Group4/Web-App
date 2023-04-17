@@ -16,6 +16,7 @@ import {
   getListDriver,
   getListPassenger,
   getListTrip,
+  getListTripbyCustomer,
 } from "../../services/getapi";
 import {
   DirectionsRenderer,
@@ -227,7 +228,9 @@ export const Customers = (props) => {
   const [price, setPrice] = React.useState("");
   const [trip, setTrip] = React.useState("");
   const [flag, setFlag] = React.useState(false);
-  const rootData = useQuery(["", "/"], () => getListTrip());
+  const rootData = useQuery(["", "/", auth.id], () =>
+    getListTripbyCustomer({ id: auth.id })
+  );
   const [rootDataProcess, setRootDataProcess] = React.useState<any>(null);
 
   useEffect(() => {

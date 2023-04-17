@@ -59,14 +59,11 @@ export const CreateTrip = (props) => {
   const [ind, setInd] = React.useState(0);
 
   const [prices, setPrices] = React.useState<any>();
+  console.log(API_Key);
 
   useEffect(() => {
     getPrice(distance).then((prices) => setPrices(prices));
   }, [distance]);
-
-  useEffect(() => {
-    console.log(prices);
-  }, [prices]);
 
   const originRef = React.useRef<any>();
   const destiantionRef = React.useRef<any>();
@@ -156,8 +153,8 @@ export const CreateTrip = (props) => {
       StartAddress: originName,
       LatStartAddr: origin?.lat,
       LongStartAddr: origin?.lng,
-      PassengerPhone: "01239916133",
-      Price: 20000,
+      PassengerPhone: "0123456789",
+      Price: prices?.data?.motorbike,
       VehicleType: "Motorbike",
     }).then((IS) => {
       console.log(IS);

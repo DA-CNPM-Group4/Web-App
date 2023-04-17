@@ -12,9 +12,11 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import { StyleSheet, View } from "react-native";
 import { useQuery } from "react-query";
 import { getListDriver, getListPassenger } from "../../services/getapi";
+import { authContext } from "../../hooks/authentication";
 
 export const Customers = (props) => {
   const navigate = useNavigate();
+  const auth = useContext(authContext);
   const [status, setStatus] = React.useState({
     name: "Huynh Loi Chuan",
     email: "loichuanhuynh@gmail.com",
@@ -49,7 +51,6 @@ export const Customers = (props) => {
     console.log(rootData.data);
   }, [rootData.isFetched, rootData.isFetching]);
 
-  console.log("a");
   const renderItem = ({ item, index }) => {
     return (
       <ListItem
@@ -65,7 +66,7 @@ export const Customers = (props) => {
             name: item.name,
             email: item.email,
             phone: item.phone,
-            address: "DH KHTN TP HCM",
+            address: item.address,
           });
           setInfo(true);
         }}
@@ -118,7 +119,7 @@ export const Customers = (props) => {
               alignItems: "center",
             }}
           >
-            <Text style={{ fontSize: 13 }}>Trường ĐH KHTN TPHCM</Text>
+            <Text style={{ fontSize: 13 }}>{item.address}</Text>
           </View>
           <View
             style={{
@@ -126,9 +127,32 @@ export const Customers = (props) => {
               paddingVertical: 5,
               justifyContent: "center",
               alignItems: "center",
+              flexShrink: 1,
             }}
           >
-            <Text style={{ fontSize: 13 }}>Male</Text>
+            <Text style={{ fontSize: 13 }}>
+              {item.gender ? "Male" : "Female"}
+            </Text>
+          </View>
+          <View
+            style={{
+              paddingVertical: 5,
+              justifyContent: "center",
+              alignItems: "center",
+              flexShrink: 1,
+            }}
+          >
+            <Button
+              size="tiny"
+              appearance="ghost"
+              status="basic"
+              onPress={() => {
+                auth.SetID({ id: item.accountId });
+                navigate("/listtripbydriver");
+              }}
+            >
+              ...
+            </Button>
           </View>
         </View>
       </ListItem>
