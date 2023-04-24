@@ -265,7 +265,7 @@ export const Customers = (props) => {
                 renderItem={renderItem}
               />
             )}
-            {data.length <= 0 && (
+            {data?.length <= 0 && (
               <View
                 style={{
                   width: "100%",

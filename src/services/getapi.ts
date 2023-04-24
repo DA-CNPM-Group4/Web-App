@@ -16,12 +16,45 @@ export const getListTrip = async () => {
   return (await sendAuthenicatedRequest('/Trip/Trip/GetTrips', 'GET', null)).data;
 };
 
-export const getListTripbyDriver = async ({id}) => {
-  return (await sendAuthenicatedRequest(`/Trip/Trip/GetDriverTrips?driverId=${id}`, 'GET', null)).data;
+export const getListTripbyDriver = async ({ id }) => {
+   const data = JSON.stringify({
+     driverId: id,
+     pageSize: 1,
+     pageNum: 1,
+   });
+  console.log(data);
+  return (await sendAuthenicatedRequest(`/Trip/Trip/GetDriverTripPageing`, 'GET', data)).data;
 };
 
-export const getListTripbyCustomer = async ({id}) => {
-  return (await sendAuthenicatedRequest(`/Trip/Trip/GetPassengerTrips?passengerId=${id}`, 'GET', null)).data;
+export const getTotalListTripbyDriver = async ({ id }) => {
+   const data = JSON.stringify({
+     driverId: id,
+     pageSize: 1,
+     pageNum: 1,
+   });
+  console.log(data);
+  return (await sendAuthenicatedRequest(`/Trip/Trip/GetDriverTripPageing`, 'GET', data)).data;
+};
+
+
+export const getListTripbyCustomer = async ({ id }) => {
+  const data = JSON.stringify({
+    passengerId: id,
+    pageSize: 1,
+  });
+
+  console.log(data);
+  return (await sendAuthenicatedRequest(`/Trip/Trip/GetPassengersTripPaging`, 'GET',data)).data;
+};
+
+export const getTotalListTripbyCustomer = async ({ id }) => {
+  const data = JSON.stringify({
+    passengerId: id,
+    pageSize: 1,
+  });
+
+  console.log(data);
+  return (await sendAuthenicatedRequest(`/Trip/Trip/GetPassengersTripPaging`, 'GET',data)).data;
 };
 
 export const getPrice = async (distance) => {

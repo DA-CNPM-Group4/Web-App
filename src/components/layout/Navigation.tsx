@@ -122,18 +122,12 @@ export const Navigation = () => {
             accessoryLeft={AvartarIcon}
             onPressIn={() => navigate("/drivers")}
           />
-          <MenuItem
+          {/* <MenuItem
             style={{ backgroundColor: "#F6F8F9" }}
             title="Connected accounts"
             accessoryLeft={ClipboardIcon}
             // onPressIn={}
-          />
-          <MenuItem
-            style={{ backgroundColor: "#F6F8F9" }}
-            title="Reports"
-            accessoryLeft={FileIcon}
-            // onPressIn={}
-          />
+          /> */}
         </View>
         <View style={styles.MenuItem}>
           <MenuItem

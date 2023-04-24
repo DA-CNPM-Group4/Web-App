@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Button,
   Layout,
@@ -21,6 +21,7 @@ import {
 import {
   DirectionsRenderer,
   GoogleMap,
+  Marker,
   useJsApiLoader,
 } from "@react-google-maps/api";
 import { authContext } from "../../hooks/authentication";
@@ -59,6 +60,8 @@ export const Customers = (props) => {
   const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
   const dbRef = ref(database);
+
+  const [page, setpage] = useState(1);
   const OnClickTrip = (tripId) => {
     if (tripId === "") return;
     get(child(dbRef, `trips/${tripId}`))
@@ -76,21 +79,9 @@ export const Customers = (props) => {
               console.log("Driver no active");
               return;
             } else {
-              setOrigin({
+              setLocationDriver({
                 lat: driver.lat,
                 lng: driver.long,
-              });
-              console.log({
-                lat: driver.lat,
-                lng: driver.long,
-              });
-              setDestination({
-                lat: destinationb.lat,
-                lng: destinationb.lng,
-              });
-              console.log({
-                lat: destinationb.lat,
-                lng: destinationb.lng,
               });
             }
             return;
@@ -105,21 +96,9 @@ export const Customers = (props) => {
               console.log("Driver no active");
               return;
             } else {
-              setOrigin({
-                lat: originb.lat,
-                lng: originb.lng,
-              });
-              setDestination({
+              setLocationDriver({
                 lat: driver.lat,
                 lng: driver.long,
-              });
-              console.log({
-                lat: driver.lat,
-                lng: driver.long,
-              });
-              console.log({
-                lat: originb.lat,
-                lng: originb.lng,
               });
             }
             return;
@@ -156,10 +135,11 @@ export const Customers = (props) => {
   const [tripId, setTripId] = React.useState("");
   const [duration, setDuration] = React.useState("");
 
-  const center = {
+  const [center, setCenter] = useState({
     lat: 10.75552665046525,
     lng: 106.66452829325283,
-  };
+  });
+  const [locationDriver, setLocationDriver] = useState(null);
   const [origin, setOrigin] = React.useState(null);
   const [destination, setDestination] = React.useState(null);
   const [originb, setOriginb] = React.useState(null);
@@ -178,14 +158,18 @@ export const Customers = (props) => {
     calculateRoute();
     const interval = setInterval(() => {
       OnClickTrip(tripId);
-    }, 20 * 1000);
+    }, 5 * 1000);
     return () => clearInterval(interval);
   }, [origin, destination]);
+
+  const [flagS, setFlagS] = useState(false);
 
   async function calculateRoute() {
     if (origin === null || destination === null) {
       return;
     }
+    if (flagS) return;
+    setFlag(true);
     const directionsService = new google.maps.DirectionsService();
     const results = await directionsService.route({
       origin: origin,
@@ -193,6 +177,7 @@ export const Customers = (props) => {
       travelMode: google.maps.TravelMode.DRIVING,
     });
     console.log(results);
+
     setDirectionsResponse(results);
   }
 
@@ -228,35 +213,44 @@ export const Customers = (props) => {
   const [price, setPrice] = React.useState("");
   const [trip, setTrip] = React.useState("");
   const [flag, setFlag] = React.useState(false);
-  const rootData = useQuery(["", "/", auth.id], () =>
+  const rootData = useQuery("listtripbycustomer", () =>
     getListTripbyCustomer({ id: auth.id })
   );
   const [rootDataProcess, setRootDataProcess] = React.useState<any>(null);
 
   useEffect(() => {
     if (rootDataProcess === null) return;
-    console.log(rootDataProcess);
     setFlag(true);
   }, [rootDataProcess]);
 
   useEffect(() => {
     if (rootData === null) return;
     setFlag(false);
-    const data = rootData.data?.data?.map((item, index, map) => {
-      const customer = Passengers?.find(
-        (p) => p.accountId === item.passengerId
-      );
-      const driver = Drivers?.find((d) => d.accountId === item.driverId);
-      if (customer != undefined) {
-        item.PassengerName = customer?.name;
-      } else item.PassengerName = "No Name";
-      if (driver != undefined) {
-        item.DriverName = driver?.name;
-      } else item.DriverName = "No Name";
-      return item;
-    });
+    const data = rootData.data?.data
+      ?.sort((itemA, itemB) => {
+        const DateA = new Date(itemA?.createdTime);
+        const DateB = new Date(itemB?.createdTime);
+        if (DateA.getTime() < DateB.getTime()) return 1;
+        return -1;
+      })
+      .map((item, index, map) => {
+        const customer = Passengers?.find(
+          (p) => p.accountId === item.passengerId
+        );
+        const driver = Drivers?.find((d) => d.accountId === item.driverId);
+        if (customer != undefined) {
+          item.PassengerName = customer?.name;
+        } else item.PassengerName = "No Name";
+        if (driver != undefined) {
+          item.DriverName = driver?.name;
+        } else item.DriverName = "No Name";
+        return item;
+      });
     setRootDataProcess(data);
+    console.log(data);
   }, [rootData.isFetched, rootData.isFetching, Passengers, Drivers]);
+
+  const [rate, setRate] = useState(false);
 
   const renderItem = ({ item, index }) => {
     return (
@@ -295,6 +289,7 @@ export const Customers = (props) => {
             lng: item?.longDesAddr,
           });
           setTripId(item?.tripId);
+          if (item?.tripStatus === "Finished") setRate(true);
         }}
       >
         <View
@@ -667,28 +662,30 @@ export const Customers = (props) => {
                   </View>
                 </View>
               </View>
-              <View
-                style={{
-                  paddingVertical: 5,
-                  width: "100%",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                  flexDirection: "row",
-                  paddingRight: 20,
-                }}
-              >
-                <Text style={{ fontSize: 20 }}>Trip review:</Text>
-                <View style={{ paddingHorizontal: 5 }}></View>
-                <Text style={{ fontSize: 20 }}>4 </Text>
-                <StarIcon></StarIcon>
-              </View>
+              {rate && (
+                <View
+                  style={{
+                    paddingVertical: 5,
+                    width: "100%",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    flexDirection: "row",
+                    paddingRight: 20,
+                  }}
+                >
+                  <Text style={{ fontSize: 20 }}>Trip review:</Text>
+                  <View style={{ paddingHorizontal: 5 }}></View>
+                  <Text style={{ fontSize: 20 }}>4 </Text>
+                  <StarIcon></StarIcon>
+                </View>
+              )}
             </View>
           </View>
           <View style={{ width: "70%", height: "80%" }}>
             {!isLoaded && <Text>loading....</Text>}
             {isLoaded && (
               <GoogleMap
-                center={center}
+                //center={center}
                 zoom={15}
                 mapContainerStyle={{ width: "100%", height: "100%" }}
                 options={{
@@ -699,6 +696,8 @@ export const Customers = (props) => {
                 }}
                 onLoad={(map) => setMap(map)}
               >
+                {locationDriver != null && <Marker position={locationDriver} />}
+
                 {directionsResponse && (
                   <DirectionsRenderer
                     options={{

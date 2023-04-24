@@ -24,6 +24,7 @@ export interface IAuthContext {
   SetID: (payload: { id: string }) => void;
   user: User;
   id: string;
+  flag: boolean;
 }
 
 export const useProviderAuth = () => {
@@ -31,28 +32,29 @@ export const useProviderAuth = () => {
   let previousRefeshToken = undefined;
   let previousUser = undefined;
   let previousAccountId = undefined;
+  const [flag, setFlag] = useState(false);
 
   if (Platform.OS === "web") {
-    let flag = false;
-    previousToken = localStorage.getItem("accessToken");
-    previousRefeshToken = localStorage.getItem("refreshToken");
-    previousAccountId = localStorage.getItem("accountId");
-    if (previousToken && previousAccountId) {
-      if (flag) return;
-      flag = true;
-      const userinfo = getInfoUser({ accountId: previousAccountId }).then(
-        (useri) => {
-          setUser({
-            name: useri.data?.data?.name,
-            identityNumber: useri.data?.data?.identityNumber,
-            email: useri.data?.data?.email,
-            gender: useri.data?.data?.gender,
-            phone: useri.data?.data?.phone,
-            address: useri.data?.data?.address,
-            ...user,
-          });
-        }
-      );
+    if (!flag) {
+      previousToken = localStorage.getItem("accessToken");
+      previousRefeshToken = localStorage.getItem("refreshToken");
+      previousAccountId = localStorage.getItem("accountId");
+      if (previousToken && previousAccountId) {
+        setFlag(true);
+        const userinfo = getInfoUser({ accountId: previousAccountId }).then(
+          (useri) => {
+            setUser({
+              name: useri.data?.data?.name,
+              identityNumber: useri.data?.data?.identityNumber,
+              email: useri.data?.data?.email,
+              gender: useri.data?.data?.gender,
+              phone: useri.data?.data?.phone,
+              address: useri.data?.data?.address,
+              ...user,
+            });
+          }
+        );
+      }
     }
   }
   const [id, setId] = useState("");
@@ -123,6 +125,7 @@ export const useProviderAuth = () => {
     updateUser,
     signIn,
     signOut,
+    flag,
   };
 };
 

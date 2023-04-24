@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Button,
   Layout,
@@ -20,6 +20,7 @@ import {
 import {
   DirectionsRenderer,
   GoogleMap,
+  Marker,
   useJsApiLoader,
 } from "@react-google-maps/api";
 import { authContext } from "../../hooks/authentication";
@@ -46,6 +47,20 @@ const StarIcon = (props) => (
   <Icon {...props} style={styles.icon1} name="star" color="#EDCB1C" />
 );
 
+const StepBackwardIcon = (props) => (
+  <Icon {...props} style={styles.icon1} name="step-backward" color="#000000" />
+);
+
+const LeftIcon = (props) => (
+  <Icon {...props} style={styles.icon1} name="chevron-left" color="#000000" />
+);
+const StepForwarIcon = (props) => (
+  <Icon {...props} style={styles.icon1} name="step-forward" color="#000000" />
+);
+const RightIcon = (props) => (
+  <Icon {...props} style={styles.icon1} name="chevron-right" color="#000000" />
+);
+
 export const Customers = (props) => {
   const navigate = useNavigate();
   const auth = useContext(authContext);
@@ -58,6 +73,11 @@ export const Customers = (props) => {
   const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
   const dbRef = ref(database);
+
+  const [page, setpage] = useState(1);
+  const [totalpage, settotalpage] = useState(1);
+
+  const [pagebar, setpagebar] = useState([]);
   const OnClickTrip = (tripId) => {
     if (tripId === "") return;
     get(child(dbRef, `trips/${tripId}`))
@@ -75,21 +95,9 @@ export const Customers = (props) => {
               console.log("Driver no active");
               return;
             } else {
-              setOrigin({
+              setLocationDriver({
                 lat: driver.lat,
                 lng: driver.long,
-              });
-              console.log({
-                lat: driver.lat,
-                lng: driver.long,
-              });
-              setDestination({
-                lat: destinationb.lat,
-                lng: destinationb.lng,
-              });
-              console.log({
-                lat: destinationb.lat,
-                lng: destinationb.lng,
               });
             }
             return;
@@ -104,21 +112,9 @@ export const Customers = (props) => {
               console.log("Driver no active");
               return;
             } else {
-              setOrigin({
-                lat: originb.lat,
-                lng: originb.lng,
-              });
-              setDestination({
+              setLocationDriver({
                 lat: driver.lat,
                 lng: driver.long,
-              });
-              console.log({
-                lat: driver.lat,
-                lng: driver.long,
-              });
-              console.log({
-                lat: originb.lat,
-                lng: originb.lng,
               });
             }
             return;
@@ -155,10 +151,11 @@ export const Customers = (props) => {
   const [tripId, setTripId] = React.useState("");
   const [duration, setDuration] = React.useState("");
 
-  const center = {
+  const [center, setCenter] = useState({
     lat: 10.75552665046525,
     lng: 106.66452829325283,
-  };
+  });
+  const [locationDriver, setLocationDriver] = useState(null);
   const [origin, setOrigin] = React.useState(null);
   const [destination, setDestination] = React.useState(null);
   const [originb, setOriginb] = React.useState(null);
@@ -177,14 +174,18 @@ export const Customers = (props) => {
     calculateRoute();
     const interval = setInterval(() => {
       OnClickTrip(tripId);
-    }, 20 * 1000);
+    }, 5 * 1000);
     return () => clearInterval(interval);
   }, [origin, destination]);
+
+  const [flagS, setFlagS] = useState(false);
 
   async function calculateRoute() {
     if (origin === null || destination === null) {
       return;
     }
+    if (flagS) return;
+    setFlag(true);
     const directionsService = new google.maps.DirectionsService();
     const results = await directionsService.route({
       origin: origin,
@@ -192,6 +193,7 @@ export const Customers = (props) => {
       travelMode: google.maps.TravelMode.DRIVING,
     });
     console.log(results);
+
     setDirectionsResponse(results);
   }
 
@@ -232,28 +234,37 @@ export const Customers = (props) => {
 
   useEffect(() => {
     if (rootDataProcess === null) return;
-    console.log(rootDataProcess);
     setFlag(true);
   }, [rootDataProcess]);
 
   useEffect(() => {
     if (rootData === null) return;
     setFlag(false);
-    const data = rootData.data?.data?.map((item, index, map) => {
-      const customer = Passengers?.find(
-        (p) => p.accountId === item.passengerId
-      );
-      const driver = Drivers?.find((d) => d.accountId === item.driverId);
-      if (customer != undefined) {
-        item.PassengerName = customer?.name;
-      } else item.PassengerName = "No Name";
-      if (driver != undefined) {
-        item.DriverName = driver?.name;
-      } else item.DriverName = "No Name";
-      return item;
-    });
+    const data = rootData.data?.data
+      ?.sort((itemA, itemB) => {
+        const DateA = new Date(itemA?.createdTime);
+        const DateB = new Date(itemB?.createdTime);
+        if (DateA.getTime() < DateB.getTime()) return 1;
+        return -1;
+      })
+      .map((item, index, map) => {
+        const customer = Passengers?.find(
+          (p) => p.accountId === item.passengerId
+        );
+        const driver = Drivers?.find((d) => d.accountId === item.driverId);
+        if (customer != undefined) {
+          item.PassengerName = customer?.name;
+        } else item.PassengerName = "No Name";
+        if (driver != undefined) {
+          item.DriverName = driver?.name;
+        } else item.DriverName = "No Name";
+        return item;
+      });
     setRootDataProcess(data);
+    console.log(data);
   }, [rootData.isFetched, rootData.isFetching, Passengers, Drivers]);
+
+  const [rate, setRate] = useState(false);
 
   const renderItem = ({ item, index }) => {
     return (
@@ -292,6 +303,7 @@ export const Customers = (props) => {
             lng: item?.longDesAddr,
           });
           setTripId(item?.tripId);
+          if (item?.tripStatus === "Finished") setRate(true);
         }}
       >
         <View
@@ -398,10 +410,12 @@ export const Customers = (props) => {
         alignItems: "center",
         justifyContent: "flex-start",
         width: "100%",
+        height: "100%",
+        flexShrink: 1,
       }}
     >
       {!info && (
-        <View style={{ width: "100%" }}>
+        <View style={{ width: "100%", height: "100%", flexShrink: 1 }}>
           <View
             style={{
               justifyContent: "flex-start",
@@ -418,6 +432,8 @@ export const Customers = (props) => {
             style={{
               justifyContent: "flex-start",
               width: "100%",
+              height: "100%",
+              flexShrink: 1,
               paddingLeft: 20,
               paddingVertical: 20,
               flexDirection: "column",
@@ -504,6 +520,42 @@ export const Customers = (props) => {
                 data={rootDataProcess}
                 renderItem={renderItem}
               />
+            )}
+            {rootData.isSuccess && flag && rootData.data?.data?.length > 0 && (
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
+                  flexDirection: "row",
+                  position: "absolute",
+                  bottom: 20,
+                }}
+              >
+                <Button
+                  appearance="ghost"
+                  size="small"
+                  accessoryLeft={StepBackwardIcon}
+                ></Button>
+                <Button
+                  appearance="ghost"
+                  size="small"
+                  accessoryLeft={LeftIcon}
+                ></Button>
+                <Button status="basic" appearance="outline" size="small">
+                  1
+                </Button>
+                <Button
+                  appearance="ghost"
+                  size="small"
+                  accessoryLeft={RightIcon}
+                ></Button>
+                <Button
+                  appearance="ghost"
+                  size="small"
+                  accessoryLeft={StepForwarIcon}
+                ></Button>
+              </View>
             )}
             {rootData.isSuccess && flag && rootData.data?.data?.length <= 0 && (
               <View
@@ -664,29 +716,31 @@ export const Customers = (props) => {
                   </View>
                 </View>
               </View>
-              <View
-                style={{
-                  paddingVertical: 5,
-                  width: "100%",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                  flexDirection: "row",
-                  paddingRight: 20,
-                }}
-              >
-                <Text style={{ fontSize: 20 }}>Trip review:</Text>
-                <View style={{ paddingHorizontal: 5 }}></View>
-                <Text style={{ fontSize: 20 }}>4 </Text>
-                <StarIcon></StarIcon>
-              </View>
+              {rate && (
+                <View
+                  style={{
+                    paddingVertical: 5,
+                    width: "100%",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    flexDirection: "row",
+                    paddingRight: 20,
+                  }}
+                >
+                  <Text style={{ fontSize: 20 }}>Trip review:</Text>
+                  <View style={{ paddingHorizontal: 5 }}></View>
+                  <Text style={{ fontSize: 20 }}>4 </Text>
+                  <StarIcon></StarIcon>
+                </View>
+              )}
             </View>
           </View>
           <View style={{ width: "70%", height: "80%" }}>
             {!isLoaded && <Text>loading....</Text>}
             {isLoaded && (
               <GoogleMap
-                center={center}
-                zoom={15}
+                //center={center}
+                zoom={5}
                 mapContainerStyle={{ width: "100%", height: "100%" }}
                 options={{
                   zoomControl: false,
@@ -696,6 +750,8 @@ export const Customers = (props) => {
                 }}
                 onLoad={(map) => setMap(map)}
               >
+                {locationDriver != null && <Marker position={locationDriver} />}
+
                 {directionsResponse && (
                   <DirectionsRenderer
                     options={{

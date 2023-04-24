@@ -5,13 +5,19 @@ import { useNavigate } from "react-router-native";
 import { StyleSheet, View } from "react-native";
 import { useMutation } from "react-query";
 import { authContext } from "../../hooks/authentication";
+import {
+  ForgotPassword,
+  ForgotPasswordOTP,
+} from "../../services/authentication";
 
 export const Login = (props) => {
   const navigate = useNavigate();
   const [email, setEmail] = React.useState("");
   const [phone, setPhone] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [OTP, setOTP] = React.useState("");
   const [forgotpass, setForgotPass] = React.useState(false);
+  const [forgotpassOTP, setForgotPassOTP] = React.useState(false);
   const auth = useContext(authContext);
 
   const loginMutation = useMutation(
@@ -29,7 +35,15 @@ export const Login = (props) => {
   };
 
   const onClickForgot = async () => {
+    await ForgotPassword({ email: email }).then((data) => console.log(data));
+    setForgotPassOTP(true);
+    // console.log(ForgotPassword);
+  };
+
+  const onClickComplete = async () => {
+    await ForgotPasswordOTP({ email: email, npwd: password, OTP: OTP });
     setForgotPass(false);
+    setForgotPassOTP(false);
     console.log("ForgotPassword");
   };
 
@@ -122,7 +136,7 @@ export const Login = (props) => {
             </Layout>
           </View>
         )}
-        {forgotpass && (
+        {forgotpass && !forgotpassOTP && (
           <View style={{ alignItems: "center", width: "100%" }}>
             <View style={styles.column}>
               <Text style={{ fontSize: 30 }}>Web App</Text>
@@ -153,6 +167,58 @@ export const Login = (props) => {
               }}
             >
               <Button style={styles.button} onPress={() => onClickForgot()}>
+                Gửi yêu cầu
+              </Button>
+            </Layout>
+          </View>
+        )}
+        {forgotpass && forgotpassOTP && (
+          <View style={{ alignItems: "center", width: "100%" }}>
+            <View style={styles.column}>
+              <Text style={{ fontSize: 30 }}>Web App</Text>
+              <Text style={styles.text}>
+                Nhập tên tài khoản để khôi phục mật khẩu
+              </Text>
+            </View>
+            {/* {forgotPassMutation.isSuccess &&
+            forgotPassMutation.data.status === "error" && (
+              <Text style={styles.text} status="danger">
+                {forgotPassMutation.data.message}
+              </Text>
+            )} */}
+            <Input
+              style={styles.inputforgot}
+              placeholder="Email"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={(nextValue) => setEmail(nextValue)}
+            />
+
+            <Input
+              style={styles.input}
+              placeholder="OTP"
+              value={OTP}
+              secureTextEntry={true}
+              onChangeText={(nextValue) => setOTP(nextValue)}
+            />
+
+            <Input
+              style={styles.input}
+              placeholder="New Password"
+              value={password}
+              secureTextEntry={true}
+              onChangeText={(nextValue) => setPassword(nextValue)}
+            />
+            <Layout
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                paddingLeft: 15,
+                paddingRight: 15,
+                width: "100%",
+              }}
+            >
+              <Button style={styles.button} onPress={() => onClickComplete()}>
                 Gửi yêu cầu
               </Button>
             </Layout>

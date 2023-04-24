@@ -69,3 +69,25 @@ export const ChangePassword = async ({cpwd, npwd}) => {
   return await sendAuthenicatedRequest('/Authentication/ChangePassword', 'POST',data);
 };
 
+export const ForgotPassword = async ({email}) => {
+
+  const data = JSON.stringify({
+    email: email
+  });
+
+  return await sendAuthenicatedRequest('/Authentication/GetResetPasswordOTP', 'POST',data);
+};
+
+export const ForgotPasswordOTP = async ({email, OTP, npwd}) => {
+
+  const data = JSON.stringify({
+    email: email,
+    OTP: OTP,
+    newPassword: npwd
+  });
+
+  return await sendAuthenicatedRequest('/Authentication/ResetPassword', 'POST',data);
+};
+
+
+
