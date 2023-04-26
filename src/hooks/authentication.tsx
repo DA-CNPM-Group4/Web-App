@@ -71,16 +71,11 @@ export const useProviderAuth = () => {
   };
 
   const updateUser = async ({ name, address }) => {
-    const userinfo = await getInfoUser({ accountId: user.accountId }).then(
-      (useri) => {
-        console.log(1);
-        setUser({
-          name: name,
-          address: address,
-          ...user,
-        });
-      }
-    );
+    setUser({
+      name: name,
+      address: address,
+      ...user,
+    });
   };
 
   const getUserInfo = async (accessToken, refreshToken, accountId) => {

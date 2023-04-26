@@ -9,7 +9,7 @@ import {
 } from "@ui-kitten/components";
 import { useNavigate } from "react-router-native";
 
-import { StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { useQuery } from "react-query";
 import { getListPassenger } from "../../services/getapi";
 import Icon from "react-native-vector-icons/FontAwesome5";
@@ -59,6 +59,7 @@ export const Customers = (props) => {
   const [npassword, setnPassword] = React.useState("");
   const [pwd, setpwd] = React.useState(false);
   const [isF, setIsf] = React.useState(true);
+  const [isUpdate, setIsUpdate] = React.useState(false);
   const auth = useContext(authContext);
 
   const onClickUpdateInfo = async () => {
@@ -71,8 +72,9 @@ export const Customers = (props) => {
       Address: address,
       Gender: auth.user.gender,
     });
+    if (res.data?.status) setIsUpdate(true);
     await auth.updateUser({ name, address });
-    setIsf(true);
+    //setIsf(true);
   };
 
   const [isWarning, setIsWarning] = React.useState(false);
@@ -169,6 +171,7 @@ export const Customers = (props) => {
           </Button>
         </View>
       </View>
+
       <View
         style={{
           width: "100%",
@@ -452,6 +455,7 @@ export const Customers = (props) => {
                   }}
                   placeholder="Current Password"
                   value={password}
+                  secureTextEntry={true}
                   onChangeText={(nextValue) => setPassword(nextValue)}
                 ></Input>
               </View>
@@ -485,6 +489,7 @@ export const Customers = (props) => {
                   }}
                   placeholder="New Password"
                   value={npassword}
+                  secureTextEntry={true}
                   onChangeText={(nextValue) => setnPassword(nextValue)}
                 ></Input>
               </View>
@@ -519,6 +524,54 @@ export const Customers = (props) => {
                 >
                   Change Password
                 </Button>
+              </View>
+            </View>
+          </View>
+        )}
+        {isUpdate && (
+          <View
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "20%",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <View
+              style={{
+                width: 200,
+                height: 70,
+                backgroundColor: "#81d69b",
+                borderWidth: 1,
+              }}
+            >
+              <Text
+                style={{
+                  paddingHorizontal: 5,
+                  paddingVertical: 5,
+                }}
+              >
+                Profile successfully updated!
+              </Text>
+              <View
+                style={{
+                  width: "100%",
+                  justifyContent: "flex-end",
+                  alignItems: "flex-end",
+                  flexDirection: "row",
+                }}
+              >
+                <Button
+                  style={{ width: 30 }}
+                  size="small"
+                  onPress={() => {
+                    setIsUpdate(false);
+                  }}
+                >
+                  ok
+                </Button>
+                <View style={{ paddingHorizontal: 5 }}></View>
               </View>
             </View>
           </View>

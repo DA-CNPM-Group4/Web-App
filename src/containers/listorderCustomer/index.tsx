@@ -456,7 +456,7 @@ export const Customers = (props) => {
             }}
           >
             <Text style={{ fontSize: 25 }} category="s1">
-              List Trip
+              List Trip of Customer
             </Text>
           </View>
           <View

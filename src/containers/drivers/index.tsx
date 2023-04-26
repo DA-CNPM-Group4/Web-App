@@ -230,7 +230,7 @@ export const Customers = (props) => {
             }}
           >
             <Text style={{ fontSize: 25 }} category="s1">
-              Customers
+              Drivers
             </Text>
           </View>
           <View

@@ -158,6 +158,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     height: "100%",
+    flexShrink: 1,
     backgroundColor: "#F6F8F9",
   },
   MenuItem: {
