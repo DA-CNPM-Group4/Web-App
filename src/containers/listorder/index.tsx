@@ -77,7 +77,22 @@ export const Customers = (props) => {
   const [page, setpage] = useState(1);
   const [totalpage, settotalpage] = useState(1);
 
-  const [pagebar, setpagebar] = useState([]);
+  const leftPage = () => {
+    if (page > 1) setpage(page - 1);
+  };
+
+  const leftMaxPage = () => {
+    if (page > 1) setpage(1);
+  };
+
+  const rightPage = () => {
+    if (page < totalpage) setpage(page + 1);
+  };
+
+  const rightMaxPage = () => {
+    if (page < totalpage) setpage(totalpage);
+  };
+
   const OnClickTrip = (tripId) => {
     if (tripId === "") return;
     get(child(dbRef, `trips/${tripId}`))
@@ -235,6 +250,10 @@ export const Customers = (props) => {
   useEffect(() => {
     if (rootDataProcess === null) return;
     setFlag(true);
+    const temp: number = rootDataProcess?.length / 18;
+    const temp1 = parseInt(temp.toString());
+    if (temp > temp1) settotalpage(temp1 + 1);
+    else settotalpage(temp1);
   }, [rootDataProcess]);
 
   useEffect(() => {
@@ -267,140 +286,142 @@ export const Customers = (props) => {
   const [rate, setRate] = useState(false);
 
   const renderItem = ({ item, index }) => {
-    return (
-      <ListItem
-        style={{
-          width: "100%",
-          paddingLeft: 0,
-          paddingRight: 0,
-          paddingTop: 0,
-          paddingBottom: 0,
-        }}
-        onPress={() => {
-          setDName(item?.DriverName);
-          setCName(item?.PassengerName);
-          setvehicleType(item?.vehicleType);
-          setDistance(item?.distance?.toFixed(2));
-          setStartAdd(item?.startAddress);
-          setEndAdd(item?.destination);
-          setPrice(item?.price);
-          setTrip(item?.tripId);
-          setInfo(true);
-          setOriginb({
-            lat: item?.latStartAddr,
-            lng: item?.longStartAddr,
-          });
-          setDestinationb({
-            lat: item?.latDesAddr,
-            lng: item?.longDesAddr,
-          });
-          setOrigin({
-            lat: item?.latStartAddr,
-            lng: item?.longStartAddr,
-          });
-          setDestination({
-            lat: item?.latDesAddr,
-            lng: item?.longDesAddr,
-          });
-          setTripId(item?.tripId);
-          if (item?.tripStatus === "Finished") setRate(true);
-        }}
-      >
-        <View
+    if (0 + (page - 1) * 18 <= index && index < page * 18)
+      return (
+        <ListItem
           style={{
             width: "100%",
-            flexDirection: "row",
-            borderTopColor: "#E5E9EB",
-            borderTopWidth: 1,
-            borderBottomColor: "#E5E9EB",
-            borderBottomWidth: 1,
+            paddingLeft: 0,
+            paddingRight: 0,
+            paddingTop: 0,
+            paddingBottom: 0,
+          }}
+          onPress={() => {
+            setDName(item?.DriverName);
+            setCName(item?.PassengerName);
+            setvehicleType(item?.vehicleType);
+            setDistance(item?.distance?.toFixed(2));
+            setStartAdd(item?.startAddress);
+            setEndAdd(item?.destination);
+            setPrice(item?.price);
+            setTrip(item?.tripId);
+            setInfo(true);
+            setOriginb({
+              lat: item?.latStartAddr,
+              lng: item?.longStartAddr,
+            });
+            setDestinationb({
+              lat: item?.latDesAddr,
+              lng: item?.longDesAddr,
+            });
+            setOrigin({
+              lat: item?.latStartAddr,
+              lng: item?.longStartAddr,
+            });
+            setDestination({
+              lat: item?.latDesAddr,
+              lng: item?.longDesAddr,
+            });
+            setTripId(item?.tripId);
+            if (item?.tripStatus === "Finished") setRate(true);
           }}
         >
           <View
             style={{
-              width: "20%",
-              paddingVertical: 5,
-              paddingHorizontal: 10,
-              justifyContent: "center",
-              alignItems: "center",
+              width: "100%",
+              flexDirection: "row",
+              borderTopColor: "#E5E9EB",
+              borderTopWidth: 1,
+              borderBottomColor: "#E5E9EB",
+              borderBottomWidth: 1,
             }}
           >
-            <Text numberOfLines={1} style={{ fontSize: 13, width: "100%" }}>
-              {item?.DriverName}
-            </Text>
-          </View>
-          <View
-            style={{
-              width: "15%",
-              paddingVertical: 5,
-              paddingHorizontal: 10,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text numberOfLines={1} style={{ fontSize: 13, width: "100%" }}>
-              {item?.PassengerName}
-            </Text>
-          </View>
-          <View
-            style={{
-              width: "15%",
-              paddingVertical: 5,
-              paddingHorizontal: 10,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text style={{ fontSize: 13 }}>{item?.tripStatus}</Text>
-          </View>
-          <View
-            style={{
-              width: "20%",
-              paddingVertical: 5,
-              paddingHorizontal: 10,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text numberOfLines={1} style={{ fontSize: 13, width: "100%" }}>
-              {item?.startAddress}
-            </Text>
-          </View>
-          <View
-            style={{
-              width: "20%",
-              paddingVertical: 5,
-              paddingHorizontal: 10,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text numberOfLines={1} style={{ fontSize: 13, width: "100%" }}>
-              {item?.destination}
-            </Text>
-          </View>
-          <View
-            style={{
-              width: "10%",
-              paddingVertical: 5,
-              paddingHorizontal: 10,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text
-              numberOfLines={1}
+            <View
               style={{
-                fontSize: 13,
+                width: "20%",
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              {item?.distance?.toFixed(2)}
-              {" km"}
-            </Text>
+              <Text numberOfLines={1} style={{ fontSize: 13, width: "100%" }}>
+                {item?.DriverName}
+              </Text>
+            </View>
+            <View
+              style={{
+                width: "15%",
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text numberOfLines={1} style={{ fontSize: 13, width: "100%" }}>
+                {item?.PassengerName}
+              </Text>
+            </View>
+            <View
+              style={{
+                width: "15%",
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ fontSize: 13 }}>{item?.tripStatus}</Text>
+            </View>
+            <View
+              style={{
+                width: "20%",
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text numberOfLines={1} style={{ fontSize: 13, width: "100%" }}>
+                {item?.startAddress}
+              </Text>
+            </View>
+            <View
+              style={{
+                width: "20%",
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text numberOfLines={1} style={{ fontSize: 13, width: "100%" }}>
+                {item?.destination}
+              </Text>
+            </View>
+            <View
+              style={{
+                width: "10%",
+                height: 38,
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                numberOfLines={1}
+                style={{
+                  fontSize: 13,
+                }}
+              >
+                {item?.distance?.toFixed(2)}
+                {" km"}
+              </Text>
+            </View>
           </View>
-        </View>
-      </ListItem>
-    );
+        </ListItem>
+      );
   };
 
   return (
@@ -536,24 +557,299 @@ export const Customers = (props) => {
                   appearance="ghost"
                   size="small"
                   accessoryLeft={StepBackwardIcon}
+                  onPress={() => {
+                    leftMaxPage();
+                  }}
                 ></Button>
                 <Button
                   appearance="ghost"
                   size="small"
                   accessoryLeft={LeftIcon}
+                  onPress={() => {
+                    leftPage();
+                  }}
                 ></Button>
-                <Button status="basic" appearance="outline" size="small">
-                  1
-                </Button>
+                {page === 1 && totalpage > 2 ? (
+                  <View style={{ flexDirection: "row" }}>
+                    <Button
+                      status={"primary"}
+                      appearance="outline"
+                      size="small"
+                    >
+                      1
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button
+                      status="basic"
+                      appearance="outline"
+                      size="small"
+                      onPress={() => {
+                        setpage(2);
+                      }}
+                    >
+                      2
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button
+                      style={{ width: 40.91 }}
+                      status="basic"
+                      appearance="outline"
+                      size="small"
+                    >
+                      ...
+                    </Button>
+                  </View>
+                ) : totalpage === 3 ? (
+                  <View style={{ flexDirection: "row" }}>
+                    <Button
+                      status={page === 1 ? "primary" : "basic"}
+                      appearance="outline"
+                      size="small"
+                      onPress={() => {
+                        if (page != 1) setpage(1);
+                      }}
+                    >
+                      1
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button
+                      status={page === 2 ? "primary" : "basic"}
+                      appearance="outline"
+                      size="small"
+                      onPress={() => {
+                        if (page != 2) setpage(2);
+                      }}
+                    >
+                      2
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button
+                      status={page === 3 ? "primary" : "basic"}
+                      appearance="outline"
+                      size="small"
+                      onPress={() => {
+                        if (page != 3) setpage(3);
+                      }}
+                    >
+                      3
+                    </Button>
+                  </View>
+                ) : page > 2 && totalpage - page >= 2 ? (
+                  <View style={{ flexDirection: "row" }}>
+                    <Button
+                      style={{ width: 40.91 }}
+                      status="basic"
+                      appearance="outline"
+                      size="small"
+                    >
+                      ...
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button
+                      status="basic"
+                      appearance="outline"
+                      size="small"
+                      onPress={() => {
+                        setpage(page - 1);
+                      }}
+                    >
+                      {page - 1}
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button status="primary" appearance="outline" size="small">
+                      {page}
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button
+                      status="basic"
+                      appearance="outline"
+                      size="small"
+                      onPress={() => {
+                        setpage(page + 1);
+                      }}
+                    >
+                      {page + 1}
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button
+                      style={{ width: 40.91 }}
+                      status="basic"
+                      appearance="outline"
+                      size="small"
+                    >
+                      ...
+                    </Button>
+                  </View>
+                ) : page === 2 && totalpage - page > 2 ? (
+                  <View style={{ flexDirection: "row" }}>
+                    <Button
+                      status="basic"
+                      appearance="outline"
+                      size="small"
+                      onPress={() => {
+                        setpage(1);
+                      }}
+                    >
+                      1
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button status="primary" appearance="outline" size="small">
+                      2
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button
+                      status="basic"
+                      appearance="outline"
+                      size="small"
+                      onPress={() => {
+                        setpage(3);
+                      }}
+                    >
+                      3
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button
+                      style={{ width: 40.91 }}
+                      status="basic"
+                      appearance="outline"
+                      size="small"
+                    >
+                      ...
+                    </Button>
+                  </View>
+                ) : page === 1 && totalpage === 1 ? (
+                  <View style={{ flexDirection: "row" }}>
+                    <Button status="primary" appearance="outline" size="small">
+                      1
+                    </Button>
+                  </View>
+                ) : page <= 2 && totalpage === 2 ? (
+                  <View style={{ flexDirection: "row" }}>
+                    <Button
+                      status={page === 1 ? "primary" : "basic"}
+                      appearance="outline"
+                      size="small"
+                      onPress={() => {
+                        if (page != 1) setpage(1);
+                      }}
+                    >
+                      1
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button
+                      status={page === 2 ? "primary" : "basic"}
+                      appearance="outline"
+                      size="small"
+                      onPress={() => {
+                        if (page != 2) setpage(2);
+                      }}
+                    >
+                      2
+                    </Button>
+                  </View>
+                ) : page === totalpage && totalpage > 3 ? (
+                  <View style={{ flexDirection: "row" }}>
+                    <Button
+                      style={{ width: 40.91 }}
+                      status="basic"
+                      appearance="outline"
+                      size="small"
+                    >
+                      ...
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button
+                      status="basic"
+                      appearance="outline"
+                      size="small"
+                      onPress={() => {
+                        setpage(page - 1);
+                      }}
+                    >
+                      {page - 1}
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button status="primary" appearance="outline" size="small">
+                      {page}
+                    </Button>
+                  </View>
+                ) : page > 2 && totalpage - page === 1 ? (
+                  <View style={{ flexDirection: "row" }}>
+                    <Button
+                      style={{ width: 40.91 }}
+                      status="basic"
+                      appearance="outline"
+                      size="small"
+                    >
+                      ...
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button
+                      status="basic"
+                      appearance="outline"
+                      size="small"
+                      onPress={() => {
+                        setpage(page - 1);
+                      }}
+                    >
+                      {page - 1}
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button status="primary" appearance="outline" size="small">
+                      {page}
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button
+                      status="basic"
+                      appearance="outline"
+                      size="small"
+                      onPress={() => {
+                        setpage(page + 1);
+                      }}
+                    >
+                      {page + 1}
+                    </Button>
+                  </View>
+                ) : (
+                  <View style={{ flexDirection: "row" }}>
+                    <Button
+                      style={{ width: 40.91 }}
+                      status="basic"
+                      appearance="outline"
+                      size="small"
+                    >
+                      ...
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button status="basic" appearance="outline" size="small">
+                      2
+                    </Button>
+                    <View style={{ paddingHorizontal: 5 }}></View>
+                    <Button
+                      style={{ width: 40.91 }}
+                      status="basic"
+                      appearance="outline"
+                      size="small"
+                    >
+                      ...
+                    </Button>
+                  </View>
+                )}
                 <Button
                   appearance="ghost"
                   size="small"
                   accessoryLeft={RightIcon}
+                  onPress={() => {
+                    rightPage();
+                  }}
                 ></Button>
                 <Button
                   appearance="ghost"
                   size="small"
                   accessoryLeft={StepForwarIcon}
+                  onPress={() => {
+                    rightMaxPage();
+                  }}
                 ></Button>
               </View>
             )}
@@ -712,7 +1008,7 @@ export const Customers = (props) => {
                     }}
                   >
                     <Text style={{ fontSize: 16 }}>{EndAdd}</Text>
-                    <Text style={{ fontSize: 14 }}>1:55PM</Text>
+                    {rate && <Text style={{ fontSize: 14 }}>1:55PM</Text>}
                   </View>
                 </View>
               </View>

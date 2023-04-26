@@ -17,6 +17,7 @@ import {
   getListPassenger,
   getListTrip,
   getListTripbyCustomer,
+  getTotalListTripbyCustomer,
 } from "../../services/getapi";
 import {
   DirectionsRenderer,
@@ -48,6 +49,20 @@ const StarIcon = (props) => (
   <Icon {...props} style={styles.icon1} name="star" color="#EDCB1C" />
 );
 
+const StepBackwardIcon = (props) => (
+  <Icon {...props} style={styles.icon1} name="step-backward" color="#000000" />
+);
+
+const LeftIcon = (props) => (
+  <Icon {...props} style={styles.icon1} name="chevron-left" color="#000000" />
+);
+const StepForwarIcon = (props) => (
+  <Icon {...props} style={styles.icon1} name="step-forward" color="#000000" />
+);
+const RightIcon = (props) => (
+  <Icon {...props} style={styles.icon1} name="chevron-right" color="#000000" />
+);
+
 export const Customers = (props) => {
   const navigate = useNavigate();
   const auth = useContext(authContext);
@@ -62,6 +77,24 @@ export const Customers = (props) => {
   const dbRef = ref(database);
 
   const [page, setpage] = useState(1);
+  const [totalpage, settotalpage] = useState(1);
+
+  const leftPage = () => {
+    if (page > 1) setpage(page - 1);
+  };
+
+  const leftMaxPage = () => {
+    if (page > 1) setpage(1);
+  };
+
+  const rightPage = () => {
+    if (page < totalpage) setpage(page + 1);
+  };
+
+  const rightMaxPage = () => {
+    if (page < totalpage) setpage(totalpage);
+  };
+
   const OnClickTrip = (tripId) => {
     if (tripId === "") return;
     get(child(dbRef, `trips/${tripId}`))
@@ -213,18 +246,28 @@ export const Customers = (props) => {
   const [price, setPrice] = React.useState("");
   const [trip, setTrip] = React.useState("");
   const [flag, setFlag] = React.useState(false);
-  const rootData = useQuery("listtripbycustomer", () =>
-    getListTripbyCustomer({ id: auth.id })
+  const rootData = useQuery(["listtripbycustomer", page], () =>
+    getListTripbyCustomer({ id: auth.id, page: page })
   );
   const [rootDataProcess, setRootDataProcess] = React.useState<any>(null);
+
+  const [isTotal, setIsTotal] = useState(false);
 
   useEffect(() => {
     if (rootDataProcess === null) return;
     setFlag(true);
+    if (!isTotal) {
+      setIsTotal(true);
+      getTotalListTripbyCustomer({ id: auth.id }).then((data) => {
+        settotalpage(data?.data);
+        console.log(data.data);
+      });
+    }
   }, [rootDataProcess]);
 
   useEffect(() => {
     if (rootData === null) return;
+    if (rootData.isSuccess === false) navigate("/customers");
     setFlag(false);
     const data = rootData.data?.data
       ?.sort((itemA, itemB) => {
@@ -368,6 +411,7 @@ export const Customers = (props) => {
           <View
             style={{
               width: "10%",
+              height: 38,
               paddingVertical: 5,
               paddingHorizontal: 10,
               justifyContent: "center",
@@ -388,6 +432,7 @@ export const Customers = (props) => {
       </ListItem>
     );
   };
+  console.log(rootData);
 
   return (
     <Layout
@@ -396,10 +441,12 @@ export const Customers = (props) => {
         alignItems: "center",
         justifyContent: "flex-start",
         width: "100%",
+        height: "100%",
+        flexShrink: 1,
       }}
     >
       {!info && (
-        <View style={{ width: "100%" }}>
+        <View style={{ width: "100%", height: "100%", flexShrink: 1 }}>
           <View
             style={{
               justifyContent: "flex-start",
@@ -416,6 +463,8 @@ export const Customers = (props) => {
             style={{
               justifyContent: "flex-start",
               width: "100%",
+              height: "100%",
+              flexShrink: 1,
               paddingLeft: 20,
               paddingVertical: 20,
               flexDirection: "column",
@@ -492,18 +541,355 @@ export const Customers = (props) => {
                 <Text>DISTANCE</Text>
               </View>
             </View>
-            {rootData.isSuccess && flag && rootData.data?.data?.length > 0 && (
-              <List
-                style={{
-                  maxHeight: "100%",
-                  flexShrink: 1,
-                  width: "100%",
-                }}
-                data={rootDataProcess}
-                renderItem={renderItem}
-              />
-            )}
-            {rootData.isSuccess && flag && rootData.data?.data?.length <= 0 && (
+            {rootData.isSuccess &&
+              rootData.isFetched &&
+              flag &&
+              rootData.data?.data?.length > 0 && (
+                <List
+                  style={{
+                    maxHeight: "100%",
+                    flexShrink: 1,
+                    width: "100%",
+                  }}
+                  data={rootDataProcess}
+                  renderItem={renderItem}
+                />
+              )}
+            {rootData.isSuccess &&
+              rootData.isFetched &&
+              flag &&
+              rootData.data?.data?.length > 0 && (
+                <View
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                    flexDirection: "row",
+                    position: "absolute",
+                    bottom: 20,
+                  }}
+                >
+                  <Button
+                    appearance="ghost"
+                    size="small"
+                    accessoryLeft={StepBackwardIcon}
+                    onPress={() => {
+                      leftMaxPage();
+                    }}
+                  ></Button>
+                  <Button
+                    appearance="ghost"
+                    size="small"
+                    accessoryLeft={LeftIcon}
+                    onPress={() => {
+                      leftPage();
+                    }}
+                  ></Button>
+                  {page === 1 && totalpage > 2 ? (
+                    <View style={{ flexDirection: "row" }}>
+                      <Button
+                        status={"primary"}
+                        appearance="outline"
+                        size="small"
+                      >
+                        1
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        status="basic"
+                        appearance="outline"
+                        size="small"
+                        onPress={() => {
+                          setpage(2);
+                        }}
+                      >
+                        2
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        style={{ width: 40.91 }}
+                        status="basic"
+                        appearance="outline"
+                        size="small"
+                      >
+                        ...
+                      </Button>
+                    </View>
+                  ) : totalpage === 3 ? (
+                    <View style={{ flexDirection: "row" }}>
+                      <Button
+                        status={page === 1 ? "primary" : "basic"}
+                        appearance="outline"
+                        size="small"
+                        onPress={() => {
+                          if (page != 1) setpage(1);
+                        }}
+                      >
+                        1
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        status={page === 2 ? "primary" : "basic"}
+                        appearance="outline"
+                        size="small"
+                        onPress={() => {
+                          if (page != 2) setpage(2);
+                        }}
+                      >
+                        2
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        status={page === 3 ? "primary" : "basic"}
+                        appearance="outline"
+                        size="small"
+                        onPress={() => {
+                          if (page != 3) setpage(3);
+                        }}
+                      >
+                        3
+                      </Button>
+                    </View>
+                  ) : page > 2 && totalpage - page >= 2 ? (
+                    <View style={{ flexDirection: "row" }}>
+                      <Button
+                        style={{ width: 40.91 }}
+                        status="basic"
+                        appearance="outline"
+                        size="small"
+                      >
+                        ...
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        status="basic"
+                        appearance="outline"
+                        size="small"
+                        onPress={() => {
+                          setpage(page - 1);
+                        }}
+                      >
+                        {page - 1}
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        status="primary"
+                        appearance="outline"
+                        size="small"
+                      >
+                        {page}
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        status="basic"
+                        appearance="outline"
+                        size="small"
+                        onPress={() => {
+                          setpage(page + 1);
+                        }}
+                      >
+                        {page + 1}
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        style={{ width: 40.91 }}
+                        status="basic"
+                        appearance="outline"
+                        size="small"
+                      >
+                        ...
+                      </Button>
+                    </View>
+                  ) : page === 2 && totalpage - page > 2 ? (
+                    <View style={{ flexDirection: "row" }}>
+                      <Button
+                        status="basic"
+                        appearance="outline"
+                        size="small"
+                        onPress={() => {
+                          setpage(1);
+                        }}
+                      >
+                        1
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        status="primary"
+                        appearance="outline"
+                        size="small"
+                      >
+                        2
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        status="basic"
+                        appearance="outline"
+                        size="small"
+                        onPress={() => {
+                          setpage(3);
+                        }}
+                      >
+                        3
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        style={{ width: 40.91 }}
+                        status="basic"
+                        appearance="outline"
+                        size="small"
+                      >
+                        ...
+                      </Button>
+                    </View>
+                  ) : page === 1 && totalpage === 1 ? (
+                    <View style={{ flexDirection: "row" }}>
+                      <Button
+                        status="primary"
+                        appearance="outline"
+                        size="small"
+                      >
+                        1
+                      </Button>
+                    </View>
+                  ) : page <= 2 && totalpage === 2 ? (
+                    <View style={{ flexDirection: "row" }}>
+                      <Button
+                        status={page === 1 ? "primary" : "basic"}
+                        appearance="outline"
+                        size="small"
+                        onPress={() => {
+                          if (page != 1) setpage(1);
+                        }}
+                      >
+                        1
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        status={page === 2 ? "primary" : "basic"}
+                        appearance="outline"
+                        size="small"
+                        onPress={() => {
+                          if (page != 2) setpage(2);
+                        }}
+                      >
+                        2
+                      </Button>
+                    </View>
+                  ) : page === totalpage && totalpage > 3 ? (
+                    <View style={{ flexDirection: "row" }}>
+                      <Button
+                        style={{ width: 40.91 }}
+                        status="basic"
+                        appearance="outline"
+                        size="small"
+                      >
+                        ...
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        status="basic"
+                        appearance="outline"
+                        size="small"
+                        onPress={() => {
+                          setpage(page - 1);
+                        }}
+                      >
+                        {page - 1}
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        status="primary"
+                        appearance="outline"
+                        size="small"
+                      >
+                        {page}
+                      </Button>
+                    </View>
+                  ) : page > 2 && totalpage - page === 1 ? (
+                    <View style={{ flexDirection: "row" }}>
+                      <Button
+                        style={{ width: 40.91 }}
+                        status="basic"
+                        appearance="outline"
+                        size="small"
+                      >
+                        ...
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        status="basic"
+                        appearance="outline"
+                        size="small"
+                        onPress={() => {
+                          setpage(page - 1);
+                        }}
+                      >
+                        {page - 1}
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        status="primary"
+                        appearance="outline"
+                        size="small"
+                      >
+                        {page}
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        status="basic"
+                        appearance="outline"
+                        size="small"
+                        onPress={() => {
+                          setpage(page + 1);
+                        }}
+                      >
+                        {page + 1}
+                      </Button>
+                    </View>
+                  ) : (
+                    <View style={{ flexDirection: "row" }}>
+                      <Button
+                        style={{ width: 40.91 }}
+                        status="basic"
+                        appearance="outline"
+                        size="small"
+                      >
+                        ...
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button status="basic" appearance="outline" size="small">
+                        2
+                      </Button>
+                      <View style={{ paddingHorizontal: 5 }}></View>
+                      <Button
+                        style={{ width: 40.91 }}
+                        status="basic"
+                        appearance="outline"
+                        size="small"
+                      >
+                        ...
+                      </Button>
+                    </View>
+                  )}
+                  <Button
+                    appearance="ghost"
+                    size="small"
+                    accessoryLeft={RightIcon}
+                    onPress={() => {
+                      rightPage();
+                    }}
+                  ></Button>
+                  <Button
+                    appearance="ghost"
+                    size="small"
+                    accessoryLeft={StepForwarIcon}
+                    onPress={() => {
+                      rightMaxPage();
+                    }}
+                  ></Button>
+                </View>
+              )}
+            {rootData.isSuccess && rootData.data?.data === null && (
               <View
                 style={{
                   width: "100%",
@@ -658,7 +1044,7 @@ export const Customers = (props) => {
                     }}
                   >
                     <Text style={{ fontSize: 16 }}>{EndAdd}</Text>
-                    <Text style={{ fontSize: 14 }}>1:55PM</Text>
+                    {rate && <Text style={{ fontSize: 14 }}>1:55PM</Text>}
                   </View>
                 </View>
               </View>
@@ -686,7 +1072,7 @@ export const Customers = (props) => {
             {isLoaded && (
               <GoogleMap
                 //center={center}
-                zoom={15}
+                zoom={5}
                 mapContainerStyle={{ width: "100%", height: "100%" }}
                 options={{
                   zoomControl: false,

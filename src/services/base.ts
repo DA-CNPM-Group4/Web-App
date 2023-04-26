@@ -12,6 +12,8 @@ export const sendAuthenicatedRequest = async (url: string, method: Method, data:
     //Authorization: `Bearer ${getAccessToken()}`,
   };
 
+  
+
   return await axios.request({
     url: `${BASE_API_URL}/api${url}`,
     method,
@@ -20,3 +22,4 @@ export const sendAuthenicatedRequest = async (url: string, method: Method, data:
     responseType: responseType as any,
   });
 };
+

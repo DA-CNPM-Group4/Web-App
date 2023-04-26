@@ -2,7 +2,7 @@ import axios from 'axios';
 import qs from 'qs';
 import { BASE_API_URL } from '../config';
 import { Platform } from 'react-native';
-import { sendAuthenicatedRequest } from './base';
+import { sendAuthenicatedRequest, sendAuthenicatedRequest1 } from './base';
 
 export const getListPassenger = async () => {
   return (await sendAuthenicatedRequest('/Info/Passenger/GetPassengers', 'GET', null)).data;
@@ -16,45 +16,45 @@ export const getListTrip = async () => {
   return (await sendAuthenicatedRequest('/Trip/Trip/GetTrips', 'GET', null)).data;
 };
 
-export const getListTripbyDriver = async ({ id }) => {
+export const getListTripbyDriver = async ({ id , page}) => {
    const data = JSON.stringify({
      driverId: id,
-     pageSize: 1,
-     pageNum: 1,
+     pageSize: 18,
+     pageNum: page,
    });
   console.log(data);
-  return (await sendAuthenicatedRequest(`/Trip/Trip/GetDriverTripPageing`, 'GET', data)).data;
+  return (await sendAuthenicatedRequest(`/Trip/Trip/GetDriverTripPageing`, 'POST', data)).data;
 };
 
 export const getTotalListTripbyDriver = async ({ id }) => {
    const data = JSON.stringify({
      driverId: id,
-     pageSize: 1,
-     pageNum: 1,
+     pageSize: 18,
    });
   console.log(data);
-  return (await sendAuthenicatedRequest(`/Trip/Trip/GetDriverTripPageing`, 'GET', data)).data;
+  return (await sendAuthenicatedRequest(`/Trip/Trip/GetDriverTripTotalPages`, 'POST', data)).data;
 };
 
 
-export const getListTripbyCustomer = async ({ id }) => {
+export const getListTripbyCustomer = async ({ id, page }) => {
   const data = JSON.stringify({
     passengerId: id,
-    pageSize: 1,
+    pageSize: 18,
+    pageNum: page,
   });
 
   console.log(data);
-  return (await sendAuthenicatedRequest(`/Trip/Trip/GetPassengersTripPaging`, 'GET',data)).data;
+  return (await sendAuthenicatedRequest(`/Trip/Trip/GetPassengersTripPaging`, 'POST',data)).data;
 };
 
 export const getTotalListTripbyCustomer = async ({ id }) => {
   const data = JSON.stringify({
     passengerId: id,
-    pageSize: 1,
+    pageSize: 18,
   });
 
   console.log(data);
-  return (await sendAuthenicatedRequest(`/Trip/Trip/GetPassengersTripPaging`, 'GET',data)).data;
+  return (await sendAuthenicatedRequest(`/Trip/Trip/GetPassengersTripTotalPages`, 'POST',data)).data;
 };
 
 export const getPrice = async (distance) => {
